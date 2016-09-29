@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kibana-logging
+  labels:
+    k8s-app: kibana-logging
+    kubernetes.io/name: "Kibana"
+spec:
+  ports:
+  - port: 5601
+    protocol: TCP
+    targetPort: ui
+  selector:
+    k8s-app: kibana-logging
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: kibana-logging-v2
+  labels:
+    k8s-app: kibana-logging
+    version: v2
+spec:
+  template:
+    metadata:
+      labels:
+        k8s-app: kibana-logging
+        version: v2
+    spec:
+      containers:
+      - name: kibana-logging
+        image: kayrus/docker-kibana-kubernetes:4.6.1
+        imagePullPolicy: Always
+        resources:
+          # keep request = limit to keep this container in guaranteed class
+          limits:
+            cpu: 100m
+          requests:
+            cpu: 100m
+        env:
+          - name: "ELASTICSEARCH_URL"
+            value: "http://elasticsearch-logging:9200"
+        ports:
+        - containerPort: 5601
+          name: ui
+          protocol: TCP

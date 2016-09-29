@@ -1,0 +1,46 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: fluentd-elasticsearch
+  labels:
+    k8s-app: fluentd-logging
+spec:
+  template:
+    metadata:
+      labels:
+        k8s-app: fluentd-logging
+        name: fluentd-logging
+    spec:
+      containers:
+      - name: fluentd-elasticsearch
+        image: kayrus/fluentd-elasticsearch:1.20
+        imagePullPolicy: Always
+        # suppress "info" log level
+        args:
+          - -q
+        resources:
+          limits:
+            memory: 200Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        volumeMounts:
+        - name: var-log
+          mountPath: /var/log
+        - name: var-lib-docker-containers
+          mountPath: /var/lib/docker/containers
+          readOnly: true
+        - name: fluentd-config
+          mountPath: /etc/td-agent
+          readOnly: true
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: var-log
+        hostPath:
+          path: /var/log
+      - name: var-lib-docker-containers
+        hostPath:
+          path: /var/lib/docker/containers
+      - name: fluentd-config
+        configMap:
+          name: fluentd-config

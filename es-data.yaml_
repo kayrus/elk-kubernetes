@@ -1,0 +1,56 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: es-data
+  labels:
+    component: elasticsearch
+    role: data
+spec:
+  template:
+    metadata:
+      labels:
+        component: elasticsearch
+        role: data
+    spec:
+      containers:
+      - name: es-data
+        securityContext:
+          privileged: true
+          capabilities:
+            add:
+              - IPC_LOCK
+        image: kayrus/docker-elasticsearch-kubernetes:2.4.0
+        imagePullPolicy: Always
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: "CLUSTER_NAME"
+          valueFrom:
+            configMapKeyRef:
+              name: es-env
+              key: es-cluster-name
+        - name: NODE_MASTER
+          value: "false"
+        - name: NODE_DATA
+          value: "true"
+        - name: HTTP_ENABLE
+          value: "false"
+        - name: ES_HEAP_SIZE
+          valueFrom:
+            configMapKeyRef:
+              name: es-env
+              key: es-data-heap
+        ports:
+        - containerPort: 9300
+          name: transport
+          protocol: TCP
+          # Random hostPort to prevent multiple ES data instances on one node
+          hostPort: 28651
+        volumeMounts:
+        - name: storage
+          mountPath: /data
+      volumes:
+      - name: storage
+        emptyDir: {}

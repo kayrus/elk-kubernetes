@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch-logging
+  labels:
+    component: elasticsearch
+    role: client
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/path: '/_prometheus/metrics'
+    prometheus.io/port: '9200'
+spec:
+  selector:
+    component: elasticsearch
+    role: client
+  ports:
+  - name: http
+    port: 9200
+    protocol: TCP

@@ -1,0 +1,9 @@
+apiVersion: v1
+metadata:
+  name: es-env
+kind: ConfigMap
+data:
+  es-cluster-name: es-logs
+  es-client-heap: 256m
+  es-master-heap: 256m
+  es-data-heap: 256m
