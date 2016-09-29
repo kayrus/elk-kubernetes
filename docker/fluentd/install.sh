@@ -37,6 +37,7 @@ td-agent-gem install --no-document fluent-plugin-elasticsearch -v 1.5.0
 td-agent-gem install --no-document fluent-plugin-parser -v 0.6.1
 td-agent-gem install --no-document fluent-plugin-concat -v 0.6.2
 td-agent-gem install --no-document fluent-plugin-geoip
+td-agent-gem install --no-document fluent-plugin-rewrite
 td-agent-gem install --no-document specific_install
 td-agent-gem specific_install https://github.com/kayrus/fluent-plugin-color-stripper.git
 
