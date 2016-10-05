@@ -92,4 +92,9 @@ or wait until new index will be created (in our setup new index is being created
 
 # Credits
 
-This repo uses modified config files from https://github.com/pires/kubernetes-elasticsearch-cluster 
+This repo uses modified config files from https://github.com/pires/kubernetes-elasticsearch-cluster
+
+# Pictures
+
+![geomap](images/kibana1.png "Geo Map")
+![countries](images/kibana2.png "Countries")
