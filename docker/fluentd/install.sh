@@ -36,6 +36,7 @@ td-agent-gem install --no-document fluent-plugin-kubernetes_metadata_filter -v 0
 td-agent-gem install --no-document fluent-plugin-elasticsearch -v 1.5.0
 td-agent-gem install --no-document fluent-plugin-parser -v 0.6.1
 td-agent-gem install --no-document fluent-plugin-concat -v 0.6.2
+td-agent-gem install --no-document fluent-plugin-systemd -v 0.0.4
 td-agent-gem install --no-document fluent-plugin-geoip
 td-agent-gem install --no-document fluent-plugin-rewrite
 td-agent-gem install --no-document specific_install

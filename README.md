@@ -84,6 +84,10 @@ curl -XDELETE https://elasticsearch.example.com/logstash-2016.09.28
 
 or wait until new index will be created (in our setup new index is being created every day).
 
+# Forward Kubernetes events into Kibana/Elasticsearch
+
+`k8s-events-printer.yaml` manifest is a simple `alpine` container with `curl` and `jq` tools installed. It prints all Kubernetes events into stdout and `fluentd` just parses and forwards these events into Elasticsearch as a regular json log.
+
 # TODO
 
 ## Automatically add indexes for geoip

@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: kubernetes-events-printer
+  labels:
+    component: fluentd
+    role: kubernetes-events-printer
+spec:
+  strategy:
+    type: Recreate
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        component: fluentd
+        role: kubernetes-events-printer
+    spec:
+      containers:
+      - name: kubernetes-events-printer
+        image: kayrus/kubernetes-events-printer:latest
+        imagePullPolicy: Always

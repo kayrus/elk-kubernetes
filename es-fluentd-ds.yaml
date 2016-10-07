@@ -27,6 +27,8 @@ spec:
         volumeMounts:
         - name: var-log
           mountPath: /var/log
+        - name: run-log
+          mountPath: /run/log
         - name: var-lib-docker-containers
           mountPath: /var/lib/docker/containers
           readOnly: true
@@ -38,6 +40,9 @@ spec:
       - name: var-log
         hostPath:
           path: /var/log
+      - name: run-log
+        hostPath:
+          path: /run/log
       - name: var-lib-docker-containers
         hostPath:
           path: /var/lib/docker/containers
