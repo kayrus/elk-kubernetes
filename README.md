@@ -1,6 +1,6 @@
 # Info
 
-This repo deploys ELK stack with the following deployments/daemonsets:
+This repo deploys ELK (actually **EFK**: **Elasticsearch, Fluentd, Kibana**. But ELK abbreviation is more popular) stack with the following deployments/daemonsets:
 
 * Elasticsearch
   * ~~es-data~~
