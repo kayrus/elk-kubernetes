@@ -88,6 +88,10 @@ or wait until new index will be created (in our setup new index is being created
 
 `k8s-events-printer.yaml` manifest is a simple `alpine` container with `curl` and `jq` tools installed. It prints all Kubernetes events into stdout and `fluentd` just parses and forwards these events into Elasticsearch as a regular json log.
 
+## Known issues
+
+`curl` connection could be closed which results in container recreation. Possible reasons for this issue is `kube-proxy` which refreshes `iptables` rules. Needs detailed investigation.
+
 # TODO
 
 ## Automatically add indexes for geoip
