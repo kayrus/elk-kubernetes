@@ -7,3 +7,4 @@ data:
   es-client-heap: 256m
   es-master-heap: 256m
   es-data-heap: 256m
+  es-number-of-replicas: "1"

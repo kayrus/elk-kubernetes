@@ -32,6 +32,9 @@ RUN ulimit -n 65536
 # Disable prompts from apt.
 ENV DEBIAN_FRONTEND noninteractive
 
+# Copy Elasticsearch indices template for GEO data
+COPY elasticsearch-template-es2x.json /etc/elasticsearch-template-es2x.json
+
 # Install fluentd
 COPY install.sh /tmp/install.sh
 RUN /tmp/install.sh
