@@ -36,13 +36,9 @@ Unless Kubernetes implement its own templating support, users have to use what t
 
 In this example master and data roles are merged into one `es-data-master` pod. In case when you wish to split them, use `es-data.yaml.tmpl_` and `es-master.yaml.tmpl_` correspondingly.
 
-## Readiness probe
+## Rolling upgrade
 
-[`es-data-master.yaml.tmpl`](es-data-master.yaml.tmpl) template already contains commented `readinessProbe` code. Since we deploy a brand new cluster `readinessProbe` won't work until our Elasticsearch cluster has a green status. That is why `readinessProbe` is being applied only when Elasticsearch client is up and running and returns green status for the cluster. The final stage of the Elasticsearch cluster deployment - rolling upgrade of the each node one by one following the green cluster state.
-
-### Possible issues
-
-When you reboot your whole Kubernetes cluster, readiness probe won't allow to start Elasticsearch cluster because of the dependency loop.
+[`run.sh`](docker/elasticsearch/run.sh) script inside Elasticsearch image contain shutdown handler which waits until the node move out all its data to another cluster nodes. And only when there is no data - pod shuts down. [`es-data-master.yaml.tmpl`](es-data-master.yaml.tmpl) template contains a `terminationGracePeriodSeconds: 31557600` option which prevents premature pod kill.
 
 # Ingress example
 

@@ -27,17 +27,6 @@ spec:
               - IPC_LOCK
         image: kayrus/docker-elasticsearch-kubernetes:2.4.1
         imagePullPolicy: Always
-        #readinessProbe:
-        #  exec:
-        #    command:
-        #    - 'curl'
-        #    - '--max-time'
-        #    - '28'
-        #    - '-so /dev/null'
-        #    - 'http://elasticsearch-logging:9200/_cluster/health?wait_for_status=green&timeout=29s'
-        #  timeoutSeconds: 30
-        #  successThreshold: 3
-        #  periodSeconds: 10
         env:
         - name: NAMESPACE
           valueFrom:
@@ -73,13 +62,14 @@ spec:
         volumeMounts:
         - name: storage
           mountPath: /data
+        # /pre-stop-hook.sh hook is already used in /run.sh on pod shutdown
         #lifecycle:
         #  preStop:
         #    exec:
         #      command:
         #      - '/pre-stop-hook.sh'
-      # Wait infinite
-      terminationGracePeriodSeconds: 99999999999999999
+      # Wait infinite, we have to move all indices from the current node and only after that shut down the pod
+      terminationGracePeriodSeconds: 31557600
       volumes:
       - name: storage
         emptyDir: {}
