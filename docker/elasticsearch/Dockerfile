@@ -10,24 +10,29 @@ RUN apk upgrade --update-cache; \
 
 EXPOSE 9200 9300
 
-ENV VERSION 2.4.0
+ENV VERSION 2.4.1
+ENV GOSU_VERSION 1.7
 
 # Install Elasticsearch.
-RUN apk add --update curl ca-certificates sudo && \
-
-  ( curl -Lskj https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/$VERSION/elasticsearch-$VERSION.tar.gz | \
+RUN apk add --update curl ca-certificates sudo jq gnupg && \
+  curl -Lso /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-amd64" && \
+  curl -Lso /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-amd64.asc" && \
+  export GNUPGHOME="$(mktemp -d)" && \
+  gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 && \
+  gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu && \
+  rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc && \
+  chmod +x /usr/local/bin/gosu && \
+  ( curl -Lsj https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/$VERSION/elasticsearch-$VERSION.tar.gz | \
   gunzip -c - | tar xf - ) && \
   mv /elasticsearch-$VERSION /elasticsearch && \
-  rm -rf $(find /elasticsearch | egrep "(\.(exe|bat)$|sigar/.*(dll|winnt|x86-linux|solaris|ia64|freebsd|macosx))")
+  rm -rf $(find /elasticsearch | egrep "(\.(exe|bat)$|sigar/.*(dll|winnt|x86-linux|solaris|ia64|freebsd|macosx))") && \
+  apk del gnupg
 
 # Volume for Elasticsearch data
 VOLUME ["/data"]
 
 # Copy configuration
 COPY config /elasticsearch/config
-
-# Copy run script
-COPY run.sh /
 
 # Set environment variables defaults
 ENV ES_HEAP_SIZE 512m
@@ -47,10 +52,13 @@ ENV NUMBER_OF_REPLICAS 1
 ADD do_not_use.yml /elasticsearch/config/elasticsearch.yml
 
 # Install Elasticsearch plug-ins
-RUN /elasticsearch/bin/plugin install io.fabric8/elasticsearch-cloud-kubernetes/2.4.0_01 --verbose && /elasticsearch/bin/plugin install lmenezes/elasticsearch-kopf/2.x --verbose && /elasticsearch/bin/plugin install https://github.com/vvanholl/elasticsearch-prometheus-exporter/releases/download/2.4.0.0/elasticsearch-prometheus-exporter-2.4.0.0.zip --verbose
+RUN /elasticsearch/bin/plugin install io.fabric8/elasticsearch-cloud-kubernetes/2.4.1 --verbose && /elasticsearch/bin/plugin install lmenezes/elasticsearch-kopf/2.x --verbose && /elasticsearch/bin/plugin install https://github.com/vvanholl/elasticsearch-prometheus-exporter/releases/download/2.4.1.0/elasticsearch-prometheus-exporter-2.4.1.0.zip --verbose
 
 # Override elasticsearch.yml config, otherwise plug-in install will fail
 ADD config/elasticsearch.yml /elasticsearch/config/elasticsearch.yml
+
+# Copy run script
+COPY pre-stop-hook.sh run.sh /
 
 # Set environment
 ENV NAMESPACE default

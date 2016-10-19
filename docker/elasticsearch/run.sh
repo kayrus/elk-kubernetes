@@ -10,5 +10,19 @@ echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 # allow for memlock
 ulimit -l unlimited
 
+trap 'killes' INT TERM
+
+killes() {
+  trap '' INT TERM
+  /pre-stop-hook.sh
+  echo "Shutting down Elasticsearch (${PID})"
+  kill -TERM ${PID}
+  wait
+  echo DONE
+}
+
 # run
-sudo -E -u elasticsearch /elasticsearch/bin/elasticsearch
+gosu elasticsearch /elasticsearch/bin/elasticsearch &
+PID=$!
+echo "Started Elasticsearch (${PID})"
+wait ${PID}

@@ -5,5 +5,4 @@ cd "$CDIR"
 
 NAMESPACE="monitoring"
 
-kubectl ${CONTEXT} --namespace="${NAMESPACE}" delete ds fluentd-elasticsearch
-kubectl ${CONTEXT} --namespace="${NAMESPACE}" create -f es-fluentd-ds.yaml 
+kubectl ${CONTEXT} --namespace="${NAMESPACE}" apply -f es-fluentd-ds.yaml

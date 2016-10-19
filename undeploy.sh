@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 CDIR=$(cd `dirname "$0"` && pwd)
 cd "$CDIR"
@@ -15,10 +15,10 @@ CONTEXT=""
 #CONTEXT="--context=foo"
 NAMESPACE="monitoring"
 
-INSTANCES=(deployment/es-client deployment/es-data deployment/es-master deployment/es-data-master deployment/kibana-logging-v2 deployment/kubernetes-events-printer daemonset/fluentd-elasticsearch service/elasticsearch-logging service/elasticsearch-discovery service/kibana-logging configmap/es-env configmap/fluentd-config)
+INSTANCES="deployment/es-client deployment/es-data deployment/es-master deployment/es-data-master deployment/kibana-logging-v2 deployment/kubernetes-events-printer daemonset/fluentd-elasticsearch service/elasticsearch-logging service/elasticsearch-discovery service/kibana-logging configmap/es-env configmap/fluentd-config"
 
-for instance in ${INSTANCES[@]}; do
-  kubectl ${CONTEXT} --namespace="${NAMESPACE}" delete "${instance}"
+for instance in ${INSTANCES}; do
+  kubectl ${CONTEXT} --namespace="${NAMESPACE}" delete --grace-period=0 "${instance}"
 done
 
 PODS=$(kubectl ${CONTEXT} --namespace="${NAMESPACE}" get pods -o name | awk '/^pods\/es-/ {print $1}' | tr '\n' ' ')

@@ -7,6 +7,11 @@ metadata:
     role: client
 spec:
   replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
   template:
     metadata:
       labels:
@@ -20,24 +25,24 @@ spec:
           capabilities:
             add:
               - IPC_LOCK
-        image: kayrus/docker-elasticsearch-kubernetes:2.4.0
+        image: kayrus/docker-elasticsearch-kubernetes:2.4.1
         imagePullPolicy: Always
         env:
         - name: NAMESPACE
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        - name: "CLUSTER_NAME"
+        - name: CLUSTER_NAME
           valueFrom:
             configMapKeyRef:
               name: es-env
               key: es-cluster-name
         - name: NODE_MASTER
-          value: "false"
+          value: 'false'
         - name: NODE_DATA
-          value: "false"
+          value: 'false'
         - name: HTTP_ENABLE
-          value: "true"
+          value: 'true'
         - name: ES_HEAP_SIZE
           valueFrom:
             configMapKeyRef:

@@ -27,16 +27,19 @@ spec:
           capabilities:
             add:
               - IPC_LOCK
-        image: kayrus/docker-elasticsearch-kubernetes:2.4.0
+        image: kayrus/docker-elasticsearch-kubernetes:2.4.1
         imagePullPolicy: Always
         #readinessProbe:
         #  exec:
         #    command:
-        #    - curl
-        #    - -so /dev/null
-        #    - http://elasticsearch-logging:9200/_cluster/health?wait_for_status=green
+        #    - 'curl'
+        #    - '--max-time'
+        #    - '28'
+        #    - '-so /dev/null'
+        #    - 'http://elasticsearch-logging:9200/_cluster/health?wait_for_status=green&timeout=29s'
         #  timeoutSeconds: 30
         #  successThreshold: 3
+        #  periodSeconds: 10
         env:
         - name: NAMESPACE
           valueFrom:
@@ -72,6 +75,13 @@ spec:
         volumeMounts:
         - name: storage
           mountPath: /data
+        #lifecycle:
+        #  preStop:
+        #    exec:
+        #      command:
+        #      - '/pre-stop-hook.sh'
+      # Wait infinite
+      terminationGracePeriodSeconds: 99999999999999999
       volumes:
       - name: storage
         emptyDir: {}
