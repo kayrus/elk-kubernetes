@@ -18,7 +18,7 @@ This repo contains Elasticsearch manifests which use stateless disk storage (`em
 
 One replica shard requires at least **three Elasticsearch data pods**. Rolling upgrade will relocate all the data from the pod prepared to be terminated. If you have only two data pods, there will be no place to move replica shards.
 
-### Scheduling only one Elasticsearch data pods per node
+### Scheduling only one Elasticsearch data pod per node
 
 Kubernetes supports Daemonsets but they don't provide rolling upgrade feature. Thus this repo contains Deployment manifests with a hack - custom `hostPort` (it is commented out by default in the [`es-data-master.yaml.tmpl`](es-data-master.yaml.tmpl) template) which doesn't allow to schedule two pods of one replicaset on one node. Uncomment this setting in case when you use private network to ensure that Kubernetes will schedule one pod per node.
 
@@ -38,7 +38,7 @@ In this example master and data roles are merged into one `es-data-master` pod. 
 
 ## Rolling upgrade
 
-[`run.sh`](docker/elasticsearch/run.sh) script inside Elasticsearch image contain shutdown handler which waits until the node move out all its data to another cluster nodes. And only when there is no data - pod shuts down. [`es-data-master.yaml.tmpl`](es-data-master.yaml.tmpl) template contains a `terminationGracePeriodSeconds: 31557600` option which prevents premature pod kill.
+[`run.sh`](docker/elasticsearch/run.sh) script inside Elasticsearch image contains shutdown handler which waits until the node move out all its data to another cluster nodes. And only when there is no data - pod shuts down. [`es-data-master.yaml.tmpl`](es-data-master.yaml.tmpl) template contains a `terminationGracePeriodSeconds: 31557600` option which prevents premature pod kill.
 
 # Ingress example
 
@@ -131,8 +131,8 @@ or wait until new index will be created (in our setup new index is being created
 
 # Credits
 
-This repo uses modified config files from https://github.com/pires/kubernetes-elasticsearch-cluster
-And `pre-stop-hook.sh` from https://github.com/jetstack/elasticsearch-pet
+* This repo uses modified config files from https://github.com/pires/kubernetes-elasticsearch-cluster
+* `pre-stop-hook.sh` from https://github.com/jetstack/elasticsearch-pet
 
 # Pictures
 
