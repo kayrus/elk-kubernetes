@@ -1,6 +1,31 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
+  annotations:
+    scheduler.alpha.kubernetes.io/affinity: |
+      {
+        "podAntiAffinity": {
+          "requiredDuringSchedulingIgnoredDuringExecution": [
+            {
+              "labelSelector": {
+                "matchExpresions": [
+                  {
+                    "key": "component",
+                    "operator": "In",
+                    "values": [ "elasticsearch" ]
+                  },
+                  {
+                    "key": "role",
+                    "operator": "In",
+                    "values": [ "data" ]
+                  }
+                ]
+              },
+              "topologyKey": "kubernetes.io/hostname"
+            }
+          ]
+        }
+      }
   name: es-data-master
   labels:
     component: elasticsearch
