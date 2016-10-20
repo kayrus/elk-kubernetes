@@ -20,9 +20,11 @@ One replica shard requires at least **three Elasticsearch data pods**. Rolling u
 
 ### Scheduling only one Elasticsearch data pod per node
 
-Kubernetes supports Daemonsets but they don't provide rolling upgrade feature. Thus this repo contains Deployment manifests with a hack - custom `hostPort` (it is commented out by default in the [`es-data-master.yaml.tmpl`](es-data-master.yaml.tmpl) template) which doesn't allow to schedule two pods of one replicaset on one node. Uncomment this setting in case when you use private network to ensure that Kubernetes will schedule one pod per node.
+Kubernetes supports Daemonsets but they don't provide rolling update feature. Thus this repo contains Deployment manifests with a hack - dummy 28651 `hostPort` which doesn't allow to schedule more than one pod on one node.
 
 Kubernetes 1.4 introduced [Inter-pod affinity and anti-affinity](http://kubernetes.io/docs/user-guide/node-selection/#inter-pod-affinity-and-anti-affinity-alpha-feature) which also could be used to resolve this issue.
+
+Unfortunately Deployment's rolling update feature has a flaw, it doesn't limit pods in "Terminating" state even when you use [`preStop`](http://kubernetes.io/docs/user-guide/pods/#termination-of-pods) hook. To workaround this issue, `./deploy.sh` script marks Kubernetes cluster nodes with the `elasticsearch.data=true` label. Which means that even when you have 10 nodes and 8 Elasticsearch pods, there will be not less than 7 `Running` pods and not more than one `Terminating` pod.
 
 ### Bash templates
 
@@ -76,6 +78,68 @@ spec:
           serviceName: elasticsearch-logging
           servicePort: 9200
         path: /
+```
+
+# Installation
+
+Simply run the command below:
+
+```sh
+./deploy.sh
+```
+
+In case when you use extra `kubectl` context (cluster) configuration, simply set `KUBECTL_PARAMS` environment variable:
+
+```sh
+KUBECTL_PARAMS="--context=foo" ./deploy.sh
+# or
+export KUBECTL_PARAMS="--context=foo"
+./deploy.sh
+```
+
+Deploy and watch for the status:
+
+```sh
+./deploy.sh --watch
+```
+
+# Uninstallation
+
+```sh
+./undeploy.sh
+```
+
+In case when you use extra `kubectl` context (cluster) configuration, simply set `KUBECTL_PARAMS` environment variable:
+
+```sh
+KUBECTL_PARAMS="--context=foo" ./undeploy.sh
+# or
+export KUBECTL_PARAMS="--context=foo"
+./undeploy.sh
+```
+
+# Live configuration
+
+## Set labels to worker nodes
+
+```sh
+./apply_labels_on_nodes.sh
+```
+
+## Update Elasticsearch client deployment
+
+The command below applies [`es-env.yaml`](es-env.yaml) config and [`es-client.yaml`](es-client.yaml) deployment:
+
+```sh
+./update_es_clients.sh --watch
+```
+
+## Update Elasticsearch data-master deployment
+
+The command below applies [`es-env.yaml`](es-env.yaml) config and [`es-data-master.yaml.tmpl`](es-data-master.yaml.tmpl) deployment:
+
+```sh
+./update_es_data.sh --watch
 ```
 
 # Monitoring the cluster state

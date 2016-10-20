@@ -54,11 +54,14 @@ spec:
               name: es-env
               key: es-data-heap
         ports:
-        - containerPort: 9300
-          name: transport
+        - name: transport
+          containerPort: 9300
           protocol: TCP
-          # Random hostPort to prevent multiple ES data instances on one node
-          #hostPort: 28651
+        # Random hostPort to prevent multiple ES data instances on one node
+        - name: dummy
+          containerPort: 28651
+          protocol: TCP
+          hostPort: 28651
         volumeMounts:
         - name: storage
           mountPath: /data
@@ -73,3 +76,5 @@ spec:
       volumes:
       - name: storage
         emptyDir: {}
+      nodeSelector:
+        elasticsearch.data: 'true'

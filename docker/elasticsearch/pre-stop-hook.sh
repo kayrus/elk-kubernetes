@@ -14,7 +14,7 @@ NODE_IP=$(echo "${NODE_STATS}" | jq -r ".nodes[] | select(.name==\"${HOSTNAME}\"
 
 echo "Move all data from node ${NODE_IP}"
 
-curl -s -XPUT 'http://${CLIENT_ENDPOINT}/_cluster/settings' -d "{
+curl -s -XPUT "http://${CLIENT_ENDPOINT}/_cluster/settings" -d "{
   \"transient\" :{
       \"cluster.routing.allocation.exclude._host\" : \"${NODE_IP}\"
    }

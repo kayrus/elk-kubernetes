@@ -11,19 +11,31 @@ print_green() {
   printf '%b' "\033[92m$1\033[0m\n"
 }
 
-CONTEXT=""
-#CONTEXT="--context=foo"
+#KUBECTL_PARAMS="--context=foo"
 NAMESPACE="monitoring"
+KUBECTL="kubectl ${KUBECTL_PARAMS} --namespace=\"${NAMESPACE}\""
 
-INSTANCES="deployment/es-client deployment/es-data deployment/es-master deployment/es-data-master deployment/kibana-logging-v2 deployment/kubernetes-events-printer daemonset/fluentd-elasticsearch service/elasticsearch-logging service/elasticsearch-discovery service/kibana-logging configmap/es-env configmap/fluentd-config"
+INSTANCES="deployment/es-client
+deployment/es-data
+deployment/es-master
+deployment/es-data-master
+deployment/kibana-logging-v2
+deployment/kubernetes-events-printer
+daemonset/fluentd-elasticsearch
+service/elasticsearch-logging
+service/elasticsearch-discovery
+service/kibana-logging
+configmap/es-env
+configmap/fluentd-config"
 
 for instance in ${INSTANCES}; do
-  kubectl ${CONTEXT} --namespace="${NAMESPACE}" delete --grace-period=0 "${instance}"
+  eval "${KUBECTL} delete --ignore-not-found --now \"${instance}\""
 done
 
-PODS=$(kubectl ${CONTEXT} --namespace="${NAMESPACE}" get pods -o name | awk '/^pods\/es-/ {print $1}' | tr '\n' ' ')
+PODS=$(eval "${KUBECTL} get pods -o name" | awk '/^pod\/es-/ {print $1}' | tr '\n' ' ')
 while [ ! "${PODS}" = "" ]; do
   echo "Waiting 1 second for ${PODS}pods to shutdown..."
   sleep 1
-  PODS=$(kubectl ${CONTEXT} --namespace="${NAMESPACE}" get pods -o name | awk '/^pods\/es-/ {print $1}' | tr '\n' ' ')
+  eval "${KUBECTL} delete --now ${PODS}"
+  PODS=$(eval "${KUBECTL} get pods -o name" | awk '/^pod\/es-/ {print $1}' | tr '\n' ' ')
 done

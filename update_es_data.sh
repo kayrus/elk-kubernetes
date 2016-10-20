@@ -28,19 +28,7 @@ if [ "$ES_DATA_REPLICAS" -lt 3 ]; then
   exit 1
 fi
 
-print_green "Labeling nodes which will serve Elasticsearch data pods"
-for node in $NODES; do
-  eval "${KUBECTL} label node ${node} elasticsearch.data=true --overwrite"
-done
-
-for yaml in *.yaml.tmpl; do
-  render_template "${yaml}" | eval "${KUBECTL} create -f -"
-done
-
-for yaml in *.yaml; do
-  eval "${KUBECTL} create -f \"${yaml}\""
-done
-
-eval "${KUBECTL} create configmap fluentd-config --from-file=docker/fluentd/td-agent.conf --dry-run -o yaml" | eval "${KUBECTL} apply -f -"
+eval "${KUBECTL} apply -f es-env.yaml"
+render_template es-data-master.yaml.tmpl | eval "${KUBECTL} apply -f -"
 
 eval "${KUBECTL} get pods $@"

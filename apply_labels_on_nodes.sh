@@ -11,10 +11,6 @@ print_green() {
   printf '%b' "\033[92m$1\033[0m\n"
 }
 
-render_template() {
-  eval "echo \"$(cat "$1")\""
-}
-
 #KUBECTL_PARAMS="--context=foo"
 NAMESPACE="monitoring"
 KUBECTL="kubectl ${KUBECTL_PARAMS} --namespace=\"${NAMESPACE}\""
@@ -32,15 +28,3 @@ print_green "Labeling nodes which will serve Elasticsearch data pods"
 for node in $NODES; do
   eval "${KUBECTL} label node ${node} elasticsearch.data=true --overwrite"
 done
-
-for yaml in *.yaml.tmpl; do
-  render_template "${yaml}" | eval "${KUBECTL} create -f -"
-done
-
-for yaml in *.yaml; do
-  eval "${KUBECTL} create -f \"${yaml}\""
-done
-
-eval "${KUBECTL} create configmap fluentd-config --from-file=docker/fluentd/td-agent.conf --dry-run -o yaml" | eval "${KUBECTL} apply -f -"
-
-eval "${KUBECTL} get pods $@"
