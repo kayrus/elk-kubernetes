@@ -198,6 +198,7 @@ or wait until new index will be created (in our setup new index is being created
 
 * `journald` logs don't show up in Kibana, probably because of the TZ issues
 * `DELETED` Kubernetes events could not be stripped for now, you have to create an exclude rule for `type:"DELETED"`, otherwise these events confuse Kibana users.
+* Kubernetes < v1.3.6 has a [bug](https://github.com/kubernetes/kubernetes/issues/35333) which stops pause container before graceful Elasticsearch pod shutdown which results in inaccessible data pod while moving out shards.
 
 # TODO
 
