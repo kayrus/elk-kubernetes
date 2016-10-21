@@ -17,6 +17,23 @@ spec:
       labels:
         component: elasticsearch
         role: data
+      annotations:
+        scheduler.alpha.kubernetes.io/affinity: |
+          {
+            \"podAntiAffinity\": {
+              \"requiredDuringSchedulingIgnoredDuringExecution\": [
+                {
+                  \"labelSelector\": {
+                    \"matchLabels\": {
+                        \"component\": \"elasticsearch\",
+                        \"role\": \"data\"
+                      }
+                  },
+                  \"topologyKey\": \"kubernetes.io/hostname\"
+                }
+              ]
+            }
+          }
     spec:
       containers:
       - name: es-data

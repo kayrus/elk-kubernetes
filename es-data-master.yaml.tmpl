@@ -1,36 +1,11 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  annotations:
-    scheduler.alpha.kubernetes.io/affinity: |
-      {
-        "podAntiAffinity": {
-          "requiredDuringSchedulingIgnoredDuringExecution": [
-            {
-              "labelSelector": {
-                "matchExpresions": [
-                  {
-                    "key": "component",
-                    "operator": "In",
-                    "values": [ "elasticsearch" ]
-                  },
-                  {
-                    "key": "role",
-                    "operator": "In",
-                    "values": [ "data" ]
-                  }
-                ]
-              },
-              "topologyKey": "kubernetes.io/hostname"
-            }
-          ]
-        }
-      }
   name: es-data-master
   labels:
     component: elasticsearch
     role: data
-    role: master
+    master: 'true'
 spec:
   replicas: ${ES_DATA_REPLICAS}
   strategy:
@@ -43,7 +18,24 @@ spec:
       labels:
         component: elasticsearch
         role: data
-        role: master
+        master: 'true'
+      annotations:
+        scheduler.alpha.kubernetes.io/affinity: |
+          {
+            \"podAntiAffinity\": {
+              \"requiredDuringSchedulingIgnoredDuringExecution\": [
+                {
+                  \"labelSelector\": {
+                    \"matchLabels\": {
+                        \"component\": \"elasticsearch\",
+                        \"role\": \"data\"
+                      }
+                  },
+                  \"topologyKey\": \"kubernetes.io/hostname\"
+                }
+              ]
+            }
+          }
     spec:
       containers:
       - name: es-data-master

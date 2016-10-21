@@ -4,7 +4,7 @@ metadata:
   name: es-master
   labels:
     component: elasticsearch
-    role: master
+    master: 'true'
 spec:
   replicas: ${ES_DATA_REPLICAS}
   strategy:
@@ -16,7 +16,7 @@ spec:
     metadata:
       labels:
         component: elasticsearch
-        role: master
+        master: 'true'
     spec:
       containers:
       - name: es-master
