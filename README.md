@@ -1,6 +1,6 @@
 # Info
 
-This repo deploys ELK (actually **EFK**: **Elasticsearch, Fluentd, Kibana**. But ELK abbreviation is more popular) stack with the following deployments/daemonsets:
+This repo deploys complete ELK stack (actually **EFK**: **Elasticsearch, Fluentd, Kibana**. But ELK abbreviation is more popular) with the following components:
 
 * Elasticsearch
   * ~~es-data~~
@@ -10,7 +10,15 @@ This repo deploys ELK (actually **EFK**: **Elasticsearch, Fluentd, Kibana**. But
 * fluentd - we use daemonsets, so fluentd is being scheduled on all worker nodes.
 * kibana - one instance is enough. But you can easily scale it to two or more instances.
 
+This repo already contains fluentd configuration example which works in most cases. It contains log modification examples, Java backtrace multiline logs processing, log parsing examples, [Kubernetes events processing](#forward-kubernetes-events-into-kibanaelasticsearch) and more.
+
+Kibana deployment has built-in [Kaae](https://github.com/elasticfence/kaae) plugin which allows to generate notifications on logs anomalies.
+
 ## Assumptions
+
+### Insecure Elasticsearch connections
+
+This repo should not be used in production when you use insecure public network. Fluentd is configured to send logs to Elasticsearch using insecure connection.
 
 ### Stateless storage
 
@@ -183,6 +191,8 @@ or wait until new index will be created (in our setup new index is being created
 # Forward Kubernetes events into Kibana/Elasticsearch
 
 `k8s-events-printer.yaml` manifest is a simple `alpine` container with `curl` and `jq` tools installed. It prints all Kubernetes events into stdout and `fluentd` just parses and forwards these events into Elasticsearch as a regular json log.
+
+![kubernetes events](images/kibana3.png "Kubernetes events")
 
 # Known issues
 
