@@ -46,9 +46,11 @@ Unless Kubernetes implement its own templating support, users have to use what t
 
 In this example master and data roles are merged into one `es-data-master` pod. In case when you wish to split them, use `es-data.yaml.tmpl_` and `es-master.yaml.tmpl_` correspondingly.
 
-## Rolling upgrade
+## Rolling update
 
 [`run.sh`](docker/elasticsearch/run.sh) script inside Elasticsearch image contains shutdown handler which waits until the node move out all its data to another cluster nodes. And only when there is no data - pod shuts down. [`es-data-master.yaml.tmpl`](es-data-master.yaml.tmpl) template contains a `terminationGracePeriodSeconds: 31557600` option which prevents premature pod kill.
+
+![rollin-update](images/es_update.gif "Rolling update")
 
 # Ingress example
 
