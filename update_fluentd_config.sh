@@ -3,7 +3,7 @@
 CDIR=$(cd `dirname "$0"` && pwd)
 cd "$CDIR"
 
-NAMESPACE="monitoring"
+NAMESPACE=${NAMESPACE:-monitoring}
 KUBECTL="kubectl ${KUBECTL_PARAMS} --namespace=\"${NAMESPACE}\""
 
 eval "${KUBECTL} create configmap fluentd-config --from-file=docker/fluentd/td-agent.conf --dry-run -o yaml" | eval "${KUBECTL} apply -f -"

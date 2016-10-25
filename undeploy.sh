@@ -12,7 +12,7 @@ print_green() {
 }
 
 #KUBECTL_PARAMS="--context=foo"
-NAMESPACE="monitoring"
+NAMESPACE=${NAMESPACE:-monitoring}
 KUBECTL="kubectl ${KUBECTL_PARAMS} --namespace=\"${NAMESPACE}\""
 
 INSTANCES="deployment/es-client

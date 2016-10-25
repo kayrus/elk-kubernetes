@@ -16,6 +16,10 @@ Kibana deployment has built-in [Kaae](https://github.com/elasticfence/kaae) plug
 
 ## Assumptions
 
+### Namespace
+
+This example uses `monitoring` namespace. If you wish to use your own namespace, just export `NAMESPACE=mynamespace` environment variable.
+
 ### Insecure Elasticsearch connections
 
 This repo should not be used in production when you use insecure public network. Fluentd is configured to send logs to Elasticsearch using insecure connection.
@@ -201,6 +205,7 @@ or wait until new index will be created (in our setup new index is being created
 * `journald` logs don't show up in Kibana, probably because of the TZ issues
 * `DELETED` Kubernetes events could not be stripped for now, you have to create an exclude rule for `type:"DELETED"`, otherwise these events confuse Kibana users.
 * Kubernetes < v1.3.6 has a [bug](https://github.com/kubernetes/kubernetes/issues/35333) which stops pause container before graceful Elasticsearch pod shutdown which results in inaccessible data pod while moving out shards.
+* In some cases after rolling update each new pod gets the same IP addresse as an old one. This results in one empty node after rolling update is done. New [`docker/elasticsearch/pre-stop-hook.sh`](docker/elasticsearch/pre-stop-hook.sh) already contains a fix, but you have to manually clear the `cluster.routing.allocation.exclude._host` option: `curl -XPUT http://elk:9200/_cluster/settings -d'{ "transient" :{ "cluster.routing.allocation.exclude._host" : "" } }"'`.
 
 # TODO
 

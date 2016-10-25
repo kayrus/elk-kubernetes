@@ -16,7 +16,7 @@ echo "Move all data from node ${NODE_IP}"
 
 curl -s -XPUT "http://${CLIENT_ENDPOINT}/_cluster/settings" -d "{
   \"transient\" :{
-      \"cluster.routing.allocation.exclude._host\" : \"${NODE_IP}\"
+      \"cluster.routing.allocation.exclude._name\" : \"${HOSTNAME}\"
    }
 }"
 echo

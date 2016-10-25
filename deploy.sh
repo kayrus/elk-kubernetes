@@ -16,7 +16,7 @@ render_template() {
 }
 
 #KUBECTL_PARAMS="--context=foo"
-NAMESPACE="monitoring"
+NAMESPACE=${NAMESPACE:-monitoring}
 KUBECTL="kubectl ${KUBECTL_PARAMS} --namespace=\"${NAMESPACE}\""
 
 eval "kubectl ${KUBECTL_PARAMS} create namespace \"${NAMESPACE}\""
