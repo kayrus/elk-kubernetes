@@ -94,6 +94,8 @@ spec:
         path: /
 ```
 
+If you still don't have an Ingress controller installed, you can use manifests from the [`test_ingress`](test_ingress) directory for test purposes.
+
 # Installation
 
 Simply run the command below:

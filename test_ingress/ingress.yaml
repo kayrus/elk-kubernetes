@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-monitoring
+spec:
+  tls:
+  - hosts:
+    - kibana.example.com
+    - elasticsearch.example.com
+  rules:
+  - host: kibana.example.com
+    http:
+      paths:
+      - backend:
+          serviceName: kibana-logging
+          servicePort: 5601
+        path: /
+  - host: elasticsearch.example.com
+    http:
+      paths:
+      - backend:
+          serviceName: elasticsearch-logging
+          servicePort: 9200
+        path: /
