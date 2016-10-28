@@ -19,6 +19,8 @@ RUN apk add --update curl ca-certificates sudo && \
 # Install Kaae
 
 RUN /kibana-linux-x86_64/bin/kibana plugin --install kaae -u https://github.com/elasticfence/kaae/releases/download/snapshot/kaae-latest.tar.gz
+RUN /kibana-linux-x86_64/bin/kibana plugin --install heatmap -u https://github.com/stormpython/heatmap/archive/1.0.0.zip
+RUN /kibana-linux-x86_64/bin/kibana plugin --install vectormap -u https://github.com/stormpython/vectormap/archive/master.zip
 
 RUN ln -s /etc/kaae/kaae.json /etc/kaae.json
 
