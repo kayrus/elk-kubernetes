@@ -45,4 +45,6 @@ done
 
 eval "${KUBECTL} create configmap fluentd-config --from-file=docker/fluentd/td-agent.conf --dry-run -o yaml" | eval "${KUBECTL} apply -f -"
 
+eval "${KUBECTL} create configmap kaae-config --from-file=kaae.json --dry-run -o yaml" | eval "${KUBECTL} apply -f -"
+
 eval "${KUBECTL} get pods $@"

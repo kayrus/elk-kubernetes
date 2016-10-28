@@ -1,0 +1,102 @@
+{
+  "_index": "watcher",
+  "_type": "watch",
+  "_id": "kubernetes_events",
+  "_score": 1,
+  "_source": {
+    "trigger": {
+      "schedule": {
+        "later": "every 1 minute"
+      }
+    },
+    "input": {
+      "search": {
+        "request": {
+          "index": [],
+          "body": {
+            "query": {
+              "filtered": {
+                "query": {
+                  "query_string": {
+                    "query": "kubernetes.container_name:\"kubernetes-events-printer\" AND NOT type:\"DELETED\"",
+                    "analyze_wildcard": true
+                  }
+                },
+                "filter": {
+                  "range": {
+                    "time": {
+                      "from": "now-1m"
+                    }
+                  }
+                }
+              }
+            },
+            "highlight": {
+              "pre_tags": [
+                "@kibana-highlighted-field@"
+              ],
+              "post_tags": [
+                "@/kibana-highlighted-field@"
+              ],
+              "fields": {
+                "*": {}
+              },
+              "require_field_match": false,
+              "fragment_size": 2147483647
+            },
+            "size": 500,
+            "sort": [
+              {
+                "time": {
+                  "order": "desc",
+                  "unmapped_type": "boolean"
+                }
+              }
+            ],
+            "aggs": {
+              "2": {
+                "date_histogram": {
+                  "field": "time",
+                  "interval": "30s",
+                  "time_zone": "Europe/Berlin",
+                  "min_doc_count": 0,
+                  "extended_bounds": {
+                    "min": 1477649080605,
+                    "max": 1477649980605
+                  }
+                }
+              }
+            },
+            "fields": [
+              "*",
+              "_source"
+            ],
+            "script_fields": {},
+            "fielddata_fields": [
+              "object.metadata.creationTimestamp",
+              "object.firstTimestamp",
+              "object.lastTimestamp",
+              "@timestamp",
+              "time"
+            ]
+          }
+        }
+      }
+    },
+    "condition": {
+      "script": {
+        "script": "payload.hits.total > 2"
+      }
+    },
+    "transform": {},
+    "actions": {
+      "slack_admin": {
+        "throttle_period": "1m",
+        "slack": {
+          "channel": "#devops",
+          "message": "<!channel>Kubernetes events have been detected {{ payload._id}}: {{ payload.hits.total }}"
+        }
+      }
+    }
+  }
+}

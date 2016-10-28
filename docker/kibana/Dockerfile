@@ -20,7 +20,7 @@ RUN apk add --update curl ca-certificates sudo && \
 
 RUN /kibana-linux-x86_64/bin/kibana plugin --install kaae -u https://github.com/elasticfence/kaae/releases/download/snapshot/kaae-latest.tar.gz
 
-RUN sed -i s/@timestamp/time/ /kibana-linux-x86_64/installedPlugins/kaae/kaae.json
+RUN ln -s /etc/kaae/kaae.json /etc/kaae.json
 
 # Copy run script
 COPY run.sh /

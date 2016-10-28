@@ -44,3 +44,11 @@ spec:
         - containerPort: 5601
           name: ui
           protocol: TCP
+        volumeMounts:
+        - name: kaae-config
+          mountPath: /etc/kaae
+          readOnly: true
+      volumes:
+      - name: kaae-config
+        configMap:
+          name: kaae-config

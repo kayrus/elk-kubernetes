@@ -12,7 +12,7 @@ This repo deploys complete ELK stack (actually **EFK**: **Elasticsearch, Fluentd
 
 This repo already contains fluentd configuration example which works in most cases. It contains log modification examples, Java backtrace multiline logs processing, log parsing examples, [Kubernetes events processing](#forward-kubernetes-events-into-kibanaelasticsearch) and more.
 
-Kibana deployment has built-in [Kaae](https://github.com/elasticfence/kaae) plugin which allows to generate notifications on logs anomalies.
+Kibana deployment has built-in [Kaae](https://github.com/elasticfence/kaae) plugin which allows to generate notifications on logs anomalies. See [watcher example](kaae_watchers) (should be stored at https://kibana.example.com/app/kaae).
 
 ## Assumptions
 
