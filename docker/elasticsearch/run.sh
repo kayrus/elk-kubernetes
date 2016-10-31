@@ -27,7 +27,7 @@ killes() {
 }
 
 # run
-gosu elasticsearch /elasticsearch/bin/elasticsearch &
+gosu elasticsearch /elasticsearch/bin/elasticsearch $@ &
 PID=$!
 echo "Started Elasticsearch (${PID})"
 wait ${PID}

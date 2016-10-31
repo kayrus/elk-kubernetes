@@ -26,6 +26,14 @@ spec:
             add:
               - IPC_LOCK
         image: kayrus/docker-elasticsearch-kubernetes:2.4.1
+        args:
+        - /run.sh
+        - -Des.path.conf=/etc/elasticsearch
+        readinessProbe:
+          tcpSocket:
+            port: 9300
+          timeoutSeconds: 1
+          successThreshold: 3
         imagePullPolicy: Always
         env:
         - name: NAMESPACE
@@ -49,9 +57,16 @@ spec:
               name: es-env
               key: es-client-heap
         ports:
-        - containerPort: 9200
-          name: http
+        - name: transport
+          containerPort: 9300
           protocol: TCP
-        - containerPort: 9300
-          name: transport
+        - name: http
+          containerPort: 9200
           protocol: TCP
+        volumeMounts:
+        - name: es-config
+          mountPath: /etc/elasticsearch
+      volumes:
+      - name: es-config
+        configMap:
+          name: es-config

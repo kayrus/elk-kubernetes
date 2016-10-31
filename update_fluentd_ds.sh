@@ -6,4 +6,4 @@ cd "$CDIR"
 NAMESPACE=${NAMESPACE:-monitoring}
 KUBECTL="kubectl ${KUBECTL_PARAMS} --namespace=\"${NAMESPACE}\""
 
-eval "${KUBECTL} apply -f es-fluentd-ds.yaml"
+eval "${KUBECTL} replace -f es-fluentd-ds.yaml"

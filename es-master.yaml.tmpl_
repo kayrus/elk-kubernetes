@@ -26,6 +26,14 @@ spec:
             add:
               - IPC_LOCK
         image: kayrus/docker-elasticsearch-kubernetes:2.4.1
+        args:
+        - /run.sh
+        - -Des.path.conf=/etc/elasticsearch
+        readinessProbe:
+          tcpSocket:
+            port: 9300
+          timeoutSeconds: 1
+          successThreshold: 3
         imagePullPolicy: Always
         env:
         - name: NAMESPACE
@@ -54,9 +62,12 @@ spec:
               name: es-env
               key: es-master-heap
         ports:
-        - containerPort: 9300
-          name: transport
+        - name: transport
+          containerPort: 9300
           protocol: TCP
+        volumeMounts:
+        - name: es-config
+          mountPath: /etc/elasticsearch
         # /pre-stop-hook.sh hook is already used in /run.sh on pod shutdown
         #lifecycle:
         #  preStop:
@@ -65,3 +76,7 @@ spec:
         #      - '/pre-stop-hook.sh'
       # Wait infinite, we have to move all indices from the current node and only after that shut down the pod
       terminationGracePeriodSeconds: 31557600
+      volumes:
+      - name: es-config
+        configMap:
+          name: es-config

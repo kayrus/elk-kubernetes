@@ -94,7 +94,7 @@
         "throttle_period": "1m",
         "slack": {
           "channel": "#devops",
-          "message": "<!channel>Kubernetes events have been detected {{ payload._id}}: {{ payload.hits.total }}"
+          "message": "<!channel> Kubernetes events have been detected {{ payload._id}}: {{ payload.hits.total }}"
         }
       }
     }

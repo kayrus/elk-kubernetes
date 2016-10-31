@@ -28,7 +28,8 @@ if [ "$ES_DATA_REPLICAS" -lt 3 ]; then
   exit 1
 fi
 
+./update_es_config.sh
 eval "${KUBECTL} apply -f es-env.yaml"
-render_template es-data-master.yaml.tmpl | eval "${KUBECTL} apply -f -"
+render_template es-data-master.yaml.tmpl | eval "${KUBECTL} replace -f -"
 
 eval "${KUBECTL} get pods $@"
