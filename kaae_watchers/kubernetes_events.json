@@ -18,7 +18,7 @@
               "filtered": {
                 "query": {
                   "query_string": {
-                    "query": "kubernetes.container_name:\"kubernetes-events-printer\" AND NOT type:\"DELETED\"",
+                    "query": "kubernetes.container_name:\"kubernetes-events-printer\" AND NOT type:\"DELETED\" AND NOT object.involvedObject.namespace:\"monitoring\"",
                     "analyze_wildcard": true
                   }
                 },

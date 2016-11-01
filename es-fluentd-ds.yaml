@@ -32,6 +32,9 @@ spec:
         - name: var-lib-docker-containers
           mountPath: /var/lib/docker/containers
           readOnly: true
+        - name: localdata-docker-containers
+          mountPath: /localdata/docker/containers
+          readOnly: true
         - name: fluentd-config
           mountPath: /etc/td-agent
           readOnly: true
@@ -46,6 +49,9 @@ spec:
       - name: var-lib-docker-containers
         hostPath:
           path: /var/lib/docker/containers
+      - name: localdata-docker-containers
+        hostPath:
+          path: /localdata/docker/containers
       - name: fluentd-config
         configMap:
           name: fluentd-config
