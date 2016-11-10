@@ -1,13 +1,13 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: es-data-master
+  name: es-master
   labels:
     component: elasticsearch
-    role: data
+    role: master
     master: 'true'
 spec:
-  replicas: ${ES_DATA_REPLICAS}
+  replicas: 3
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -17,28 +17,11 @@ spec:
     metadata:
       labels:
         component: elasticsearch
-        role: data
+        role: master
         master: 'true'
-      annotations:
-        scheduler.alpha.kubernetes.io/affinity: |
-          {
-            \"podAntiAffinity\": {
-              \"requiredDuringSchedulingIgnoredDuringExecution\": [
-                {
-                  \"labelSelector\": {
-                    \"matchLabels\": {
-                        \"component\": \"elasticsearch\",
-                        \"role\": \"data\"
-                      }
-                  },
-                  \"topologyKey\": \"kubernetes.io/hostname\"
-                }
-              ]
-            }
-          }
     spec:
       containers:
-      - name: es-data-master
+      - name: es-master
         securityContext:
           privileged: true
           capabilities:
@@ -72,26 +55,19 @@ spec:
         - name: NODE_MASTER
           value: 'true'
         - name: NODE_DATA
-          value: 'true'
+          value: 'false'
         - name: HTTP_ENABLE
           value: 'false'
         - name: ES_HEAP_SIZE
           valueFrom:
             configMapKeyRef:
               name: es-env
-              key: es-data-heap
+              key: es-master-heap
         ports:
         - name: transport
           containerPort: 9300
           protocol: TCP
-        # Random hostPort to prevent multiple ES data instances on one node
-        - name: dummy
-          containerPort: 28651
-          protocol: TCP
-          hostPort: 28651
         volumeMounts:
-        - name: storage
-          mountPath: /data
         - name: es-config
           mountPath: /etc/elasticsearch
         # /pre-stop-hook.sh hook is already used in /run.sh on pod shutdown
@@ -103,10 +79,6 @@ spec:
       # Wait infinite, we have to move all indices from the current node and only after that shut down the pod
       terminationGracePeriodSeconds: 31557600
       volumes:
-      - name: storage
-        emptyDir: {}
       - name: es-config
         configMap:
           name: es-config
-      nodeSelector:
-        elasticsearch.data: 'true'

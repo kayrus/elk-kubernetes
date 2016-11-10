@@ -30,6 +30,6 @@ fi
 
 ./update_es_config.sh
 eval "${KUBECTL} apply -f es-env.yaml"
-render_template es-data-master.yaml.tmpl | eval "${KUBECTL} replace -f -"
+render_template es-data.yaml.tmpl | eval "${KUBECTL} apply -f -"
 
 eval "${KUBECTL} get pods $@"

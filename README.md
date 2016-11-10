@@ -3,9 +3,9 @@
 This repo deploys complete ELK stack (actually **EFK**: **Elasticsearch, Fluentd, Kibana**. But ELK abbreviation is more popular) with the following components:
 
 * Elasticsearch
-  * ~~es-data~~
-  * ~~es-master~~
-  * es-data-master
+  * es-data
+  * es-master (3 replicas)
+  * ~~es-data-master~~ (see [Upgrade from es-data-master deployment to splitted es-master and es-data](#upgrade-from-es-data-master-deployment-to-splitted-es-master-and-es-data))
   * es-client (client nodes which allow to communicate with the elasticsearch cluster, we use 2 pod replicas)
 * fluentd - we use daemonsets, so fluentd is being scheduled on all worker nodes.
 * kibana - one instance is enough. But you can easily scale it to two or more instances.
@@ -34,7 +34,7 @@ One replica shard requires at least **three Elasticsearch data pods**. Rolling u
 
 Kubernetes supports Daemonsets but they don't provide rolling update feature. Thus this repo contains Deployment manifests with a hack - dummy 28651 `hostPort` which doesn't allow to schedule more than one pod on one node.
 
-Kubernetes 1.4 introduced [Inter-pod affinity and anti-affinity](http://kubernetes.io/docs/user-guide/node-selection/#inter-pod-affinity-and-anti-affinity-alpha-feature) which also could be used to resolve this issue. [`es-data-master.yaml.tmpl`](es-data-master.yaml.tmpl) already contains `podAntiAffinity` annotation, thus in case when you use Kubernetes 1.4.x, please comment out the 28651 `hostPort` related code.
+Kubernetes 1.4 introduced [Inter-pod affinity and anti-affinity](http://kubernetes.io/docs/user-guide/node-selection/#inter-pod-affinity-and-anti-affinity-alpha-feature) which also could be used to resolve this issue. [`es-data.yaml.tmpl`](es-data.yaml.tmpl) already contains `podAntiAffinity` annotation, thus in case when you use Kubernetes 1.4.x, please comment out the 28651 `hostPort` related code.
 
 Unfortunately Deployment's rolling update feature has a flaw, it doesn't limit pods in "Terminating" state even when you use [`preStop`](http://kubernetes.io/docs/user-guide/pods/#termination-of-pods) hook. To workaround this issue, `./deploy.sh` script marks Kubernetes cluster nodes with the `elasticsearch.data=true` label. Which means that even when you have 10 nodes and 8 Elasticsearch pods, there will be not less than 7 `Running` pods and not more than one `Terminating` pod.
 
@@ -48,11 +48,22 @@ Unless Kubernetes implement its own templating support, users have to use what t
 
 ### Split Elasticsearch pods by roles
 
-In this example master and data roles are merged into one `es-data-master` pod. In case when you wish to split them, use `es-data.yaml.tmpl_` and `es-master.yaml.tmpl_` correspondingly.
+It is recommended to use splitted master and node roles, otherwise insufficient HEAP on high load could damage your Elasticsearch cluster (node which was elected by master could not track data nodes and cluster could have red status).
+
+### Upgrade from es-data-master deployment to splitted es-master and es-data
+
+If you already have **data-master** deployment from previous versions, you have to do the following:
+
+* Delete old deployment and replicaset, but keep pods: `kubectl --namespace monitoring delete deployment es-data-master --cascade=false`, `kubectl --namespace monitoring delete rs es-data-master-INDEX --cascade=false`
+* Change labels of the old pods from `role: data` to `role: data-master`
+* Deploy `es-master.yaml`
+* Wait for masters appear in ES cluster
+* Deploy `es-data.yaml`
+* Remove old `es-data-master-*` pods one by one and make sure indices were moved to new `es-data` pods
 
 ## Rolling update
 
-[`run.sh`](docker/elasticsearch/run.sh) script inside Elasticsearch image contains shutdown handler which waits until the node move out all its data to another cluster nodes. And only when there is no data - pod shuts down. [`es-data-master.yaml.tmpl`](es-data-master.yaml.tmpl) template contains a `terminationGracePeriodSeconds: 31557600` option which prevents premature pod kill.
+[`run.sh`](docker/elasticsearch/run.sh) script inside Elasticsearch image contains shutdown handler which waits until the node move out all its data to another cluster nodes. And only when there is no data - pod shuts down. [`es-data.yaml.tmpl`](es-data.yaml.tmpl) template contains a `terminationGracePeriodSeconds: 31557600` option which prevents premature pod kill.
 
 ![rollin-update](images/es_update.gif "Rolling update")
 
@@ -150,9 +161,9 @@ The command below applies [`es-env.yaml`](es-env.yaml) config and [`es-client.ya
 ./update_es_clients.sh --watch
 ```
 
-## Update Elasticsearch data-master deployment
+## Update es-data deployment
 
-The command below applies [`es-env.yaml`](es-env.yaml) config and [`es-data-master.yaml.tmpl`](es-data-master.yaml.tmpl) deployment:
+The command below applies [`es-env.yaml`](es-env.yaml) config and [`es-data.yaml.tmpl`](es-data.yaml.tmpl) deployment:
 
 ```sh
 ./update_es_data.sh --watch
@@ -164,10 +175,6 @@ We use `kopf` plugin for elasticsearch. You can view the cluster state using lin
 
 * [https://elasticsearch.example.com/_plugin/kopf/](https://elasticsearch.example.com/_plugin/kopf/)
 * [https://kibana.example.com/status](https://kibana.example.com/status)
-
-# Surviving the reboot
-
-When you reboot the node, ES instance will become faily. Quick hook to make it happy - kill it. Kubernetes Deployment will create a new pod, it will sync all replicas and ES cluster state will be green.
 
 # Kibana and GEO data
 
