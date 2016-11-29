@@ -67,6 +67,12 @@ If you already have **data-master** deployment from previous versions, you have 
 
 ![rollin-update](images/es_update.gif "Rolling update")
 
+# Removing old indices
+
+This repo already contains Curator deployment which by default removes indices older than 60 days (this option is configurable through `es-remove-indices-older-than-days` inside `es-env.yaml` file). Curator deployment uses `crond` which is already built in Apline Linux image and it runs `curator_cli` script every day at 2AM.
+
+If you wish to update `es-remove-indices-older-than-days` variable, just edit `es-env.yaml` file and run `update_curator.sh` script.
+
 # Ingress example
 
 Example of an ingress controller to get an access from outside:
@@ -224,6 +230,7 @@ or wait until new index will be created (in our setup new index is being created
 
 * This repo uses modified config files from https://github.com/pires/kubernetes-elasticsearch-cluster
 * `pre-stop-hook.sh` from https://github.com/jetstack/elasticsearch-pet
+* Initial Curator container: https://github.com/DocX/docker-curator-cron
 
 # Pictures
 

@@ -8,3 +8,4 @@ data:
   es-master-heap: 256m
   es-data-heap: 256m
   es-number-of-replicas: '1'
+  es-remove-indices-older-than-days: '60'
