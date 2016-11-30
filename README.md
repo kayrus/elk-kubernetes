@@ -1,3 +1,5 @@
+See also [Prometheus Kubernetes complete example](https://github.com/kayrus/prometheus-kubernetes)
+
 # Info
 
 This repo deploys complete ELK stack (actually **EFK**: **Elasticsearch, Fluentd, Kibana**. But ELK abbreviation is more popular) with the following components:
