@@ -56,6 +56,11 @@ spec:
             configMapKeyRef:
               name: es-env
               key: es-client-heap
+        - name: ES_CLIENT_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              name: es-env
+              key: es-client-endpoint
         ports:
         - name: transport
           containerPort: 9300

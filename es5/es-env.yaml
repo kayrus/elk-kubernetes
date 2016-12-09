@@ -1,0 +1,12 @@
+apiVersion: v1
+metadata:
+  name: es-env
+kind: ConfigMap
+data:
+  es-cluster-name: es5-cluster
+  es-client-java-opts: '-Xms8g -Xmx8g'
+  es-master-java-opts: '-Xms1024m -Xmx1024m'
+  es-data-java-opts: '-Xms8g -Xmx8g'
+  es-client-endpoint: 'http://elasticsearch:9200'
+  # es-persistent-storage=true won't allow node on shutdown to relocate shards accross the cluster
+  es-persistent-storage: 'false'

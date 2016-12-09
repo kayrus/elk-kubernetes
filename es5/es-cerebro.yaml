@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cerebro
+  labels:
+    k8s-app: cerebro
+    kubernetes.io/name: "Cerebro"
+spec:
+  ports:
+  - port: 9000
+    protocol: TCP
+    targetPort: ui
+  selector:
+    k8s-app: cerebro
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: cerebro-v0
+  labels:
+    k8s-app: cerebro
+    version: v0
+spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        k8s-app: cerebro
+        version: v0
+    spec:
+      containers:
+      - name: cerebro
+        image: kayrus/docker-elasticsearch-cerebro:0.4.1
+        imagePullPolicy: Always
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 9000
+          timeoutSeconds: 1
+          successThreshold: 1
+        env:
+          - name: ELASTICSEARCH_URL
+            valueFrom:
+              configMapKeyRef:
+                name: es-env
+                key: es-client-endpoint
+          - name: SERVER_BASEPATH
+            value: "/cerebro"
+        ports:
+        - containerPort: 9000
+          name: ui
+          protocol: TCP

@@ -9,3 +9,6 @@ data:
   es-data-heap: 256m
   es-number-of-replicas: '1'
   es-remove-indices-older-than-days: '60'
+  es-client-endpoint: 'http://elasticsearch-logging:9200'
+  # es-persistent-storage=true won't allow node on shutdown to relocate shards accross the cluster
+  es-persistent-storage: 'false'

@@ -1,6 +1,9 @@
 #!/bin/sh
 
 # provision elasticsearch user
+
+sysctl -w vm.max_map_count=262144 || { echo "Can not set vm.max_map_count sysctl value, exiting..."; exit 1; }
+
 addgroup sudo
 adduser -D -g '' elasticsearch
 adduser elasticsearch sudo

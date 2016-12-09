@@ -42,10 +42,10 @@ spec:
           capabilities:
             add:
               - IPC_LOCK
-        image: kayrus/docker-elasticsearch-kubernetes:2.4.1
+        image: kayrus/docker-elasticsearch-kubernetes:5.0.1
         args:
         - /run.sh
-        - -Des.path.conf=/etc/elasticsearch
+        - -Epath.conf=/etc/elasticsearch
         readinessProbe:
           tcpSocket:
             port: 9300
@@ -62,22 +62,17 @@ spec:
             configMapKeyRef:
               name: es-env
               key: es-cluster-name
-        - name: NUMBER_OF_REPLICAS
-          valueFrom:
-            configMapKeyRef:
-              name: es-env
-              key: es-number-of-replicas
         - name: NODE_MASTER
           value: 'false'
         - name: NODE_DATA
           value: 'true'
         - name: HTTP_ENABLE
           value: 'false'
-        - name: ES_HEAP_SIZE
+        - name: ES_JAVA_OPTS
           valueFrom:
             configMapKeyRef:
               name: es-env
-              key: es-data-heap
+              key: es-data-java-opts
         - name: ES_CLIENT_ENDPOINT
           valueFrom:
             configMapKeyRef:
@@ -94,9 +89,9 @@ spec:
           protocol: TCP
         # Random hostPort to prevent multiple ES data instances on one node
         - name: dummy
-          containerPort: 28651
+          containerPort: 28652
           protocol: TCP
-          hostPort: 28651
+          hostPort: 28652
         volumeMounts:
         - name: storage
           mountPath: /data
@@ -112,7 +107,8 @@ spec:
       terminationGracePeriodSeconds: 31557600
       volumes:
       - name: storage
-        emptyDir: {}
+        hostPath:
+          path: '/data/es5'
       - name: es-config
         configMap:
           name: es-config

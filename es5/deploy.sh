@@ -16,8 +16,10 @@ render_template() {
 }
 
 #KUBECTL_PARAMS="--context=foo"
-NAMESPACE=${NAMESPACE:-monitoring}
+NAMESPACE=${NAMESPACE:-es5}
 KUBECTL="kubectl ${KUBECTL_PARAMS} --namespace=\"${NAMESPACE}\""
+
+eval "kubectl ${KUBECTL_PARAMS} create namespace \"${NAMESPACE}\""
 
 NODES=$(eval "${KUBECTL} get nodes -o go-template=\"{{range .items}}{{\\\$name := .metadata.name}}{{\\\$unschedulable := .spec.unschedulable}}{{range .status.conditions}}{{if eq .reason \\\"KubeletReady\\\"}}{{if eq .status \\\"True\\\"}}{{if not \\\$unschedulable}}{{\\\$name}}{{\\\"\\\\n\\\"}}{{end}}{{end}}{{end}}{{end}}{{end}}\"")
 ES_DATA_REPLICAS=$(echo "$NODES" | wc -l)
@@ -28,6 +30,19 @@ if [ "$ES_DATA_REPLICAS" -lt 3 ]; then
   exit 1
 fi
 
-render_template es-data.yaml.tmpl | eval "${KUBECTL} replace -f -"
+print_green "Labeling nodes which will serve Elasticsearch data pods"
+for node in $NODES; do
+  eval "${KUBECTL} label node ${node} es5.data=true --overwrite"
+done
+
+for yaml in *.yaml.tmpl; do
+  render_template "${yaml}" | eval "${KUBECTL} create -f -"
+done
+
+for yaml in *.yaml; do
+  eval "${KUBECTL} create -f \"${yaml}\""
+done
+
+eval "${KUBECTL} create configmap es-config --from-file=es-config --dry-run -o yaml" | eval "${KUBECTL} apply -f -"
 
 eval "${KUBECTL} get pods $@"

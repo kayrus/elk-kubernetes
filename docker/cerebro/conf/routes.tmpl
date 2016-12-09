@@ -1,0 +1,78 @@
+# Home page
+GET         ${SERVER_BASEPATH}/                                         controllers.Application.index()
+
+# Aliases module
+POST        ${SERVER_BASEPATH}/aliases/get_aliases                      @controllers.AliasesController.getAliases
+POST        ${SERVER_BASEPATH}/aliases/update_aliases                   @controllers.AliasesController.updateAliases
+
+# Rest module
+POST        ${SERVER_BASEPATH}/rest/request                             @controllers.RestController.request
+POST        ${SERVER_BASEPATH}/rest/get_cluster_mapping                 @controllers.RestController.getClusterMapping
+
+# Overview module
+POST        ${SERVER_BASEPATH}/overview                                 @controllers.ClusterOverviewController.index
+POST        ${SERVER_BASEPATH}/overview/disable_shard_allocation        @controllers.ClusterOverviewController.disableShardAllocation
+POST        ${SERVER_BASEPATH}/overview/enable_shard_allocation         @controllers.ClusterOverviewController.enableShardAllocation
+POST        ${SERVER_BASEPATH}/overview/close_indices                   @controllers.ClusterOverviewController.closeIndices
+POST        ${SERVER_BASEPATH}/overview/open_indices                    @controllers.ClusterOverviewController.openIndices
+POST        ${SERVER_BASEPATH}/overview/force_merge                     @controllers.ClusterOverviewController.forceMerge
+POST        ${SERVER_BASEPATH}/overview/clear_indices_cache             @controllers.ClusterOverviewController.clearIndexCache
+POST        ${SERVER_BASEPATH}/overview/refresh_indices                 @controllers.ClusterOverviewController.refreshIndex
+POST        ${SERVER_BASEPATH}/overview/delete_indices                  @controllers.ClusterOverviewController.deleteIndex
+POST        ${SERVER_BASEPATH}/overview/get_shard_stats                 @controllers.ClusterOverviewController.getShardStats
+
+# Navbar module
+POST        ${SERVER_BASEPATH}/navbar                                   @controllers.NavbarController.index
+
+# Analysis module
+POST        ${SERVER_BASEPATH}/analysis/indices                         @controllers.AnalysisController.getIndices
+POST        ${SERVER_BASEPATH}/analysis/analyzers                       @controllers.AnalysisController.getIndexAnalyzers
+POST        ${SERVER_BASEPATH}/analysis/fields                          @controllers.AnalysisController.getIndexFields
+POST        ${SERVER_BASEPATH}/analysis/analyze/analyzer                @controllers.AnalysisController.analyzeByAnalyzer
+POST        ${SERVER_BASEPATH}/analysis/analyze/field                   @controllers.AnalysisController.analyzeByField
+
+# Cluster Changes Controller
+POST        ${SERVER_BASEPATH}/cluster_changes                          @controllers.ClusterChangesController.get
+
+# Commons
+POST        ${SERVER_BASEPATH}/commons/indices                          @controllers.CommonsController.indices
+POST        ${SERVER_BASEPATH}/commons/nodes                            @controllers.CommonsController.nodes
+POST        ${SERVER_BASEPATH}/commons/get_index_settings               @controllers.CommonsController.getIndexSettings
+POST        ${SERVER_BASEPATH}/commons/get_index_mapping                @controllers.CommonsController.getIndexMappings
+POST        ${SERVER_BASEPATH}/commons/get_node_stats                   @controllers.CommonsController.getNodeStats
+
+# Create index module
+POST        ${SERVER_BASEPATH}/create_index/get_index_metadata          @controllers.CreateIndexController.getIndexMetadata
+POST        ${SERVER_BASEPATH}/create_index/create                      @controllers.CreateIndexController.execute
+
+# Index templates module
+POST        ${SERVER_BASEPATH}/templates                                @controllers.TemplatesController.templates
+POST        ${SERVER_BASEPATH}/templates/delete                         @controllers.TemplatesController.delete
+POST        ${SERVER_BASEPATH}/templates/create                         @controllers.TemplatesController.create
+
+# Cluster settings module
+POST        ${SERVER_BASEPATH}/cluster_settings                         @controllers.ClusterSettingsController.getSettings
+POST        ${SERVER_BASEPATH}/cluster_settings/save                    @controllers.ClusterSettingsController.save
+
+# Index settings module
+POST        ${SERVER_BASEPATH}/index_settings                           @controllers.IndexSettingsController.get
+POST        ${SERVER_BASEPATH}/index_settings/update                    @controllers.IndexSettingsController.update
+
+# Connect module
+GET         ${SERVER_BASEPATH}/connect/hosts                            @controllers.ConnectController.index
+
+# Repositories module
+POST        ${SERVER_BASEPATH}/repositories                             @controllers.RepositoriesController.get
+POST        ${SERVER_BASEPATH}/repositories/create                      @controllers.RepositoriesController.save
+POST        ${SERVER_BASEPATH}/repositories/delete                      @controllers.RepositoriesController.delete
+
+# Snapshots module
+POST        ${SERVER_BASEPATH}/snapshots                                @controllers.SnapshotsController.get
+POST        ${SERVER_BASEPATH}/snapshots/load                           @controllers.SnapshotsController.getSnapshots
+POST        ${SERVER_BASEPATH}/snapshots/create                         @controllers.SnapshotsController.create
+POST        ${SERVER_BASEPATH}/snapshots/delete                         @controllers.SnapshotsController.delete
+POST        ${SERVER_BASEPATH}/snapshots/restore                        @controllers.SnapshotsController.restore
+
+# Map the JS resource paths
+GET         ${SERVER_BASEPATH}/public/*file                             controllers.Assets.at(path="/public", file)
+GET         ${SERVER_BASEPATH}/*file                                    controllers.Assets.versioned(path="/public", file: Asset)

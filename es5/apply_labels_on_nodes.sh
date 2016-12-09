@@ -11,12 +11,8 @@ print_green() {
   printf '%b' "\033[92m$1\033[0m\n"
 }
 
-render_template() {
-  eval "echo \"$(cat "$1")\""
-}
-
 #KUBECTL_PARAMS="--context=foo"
-NAMESPACE=${NAMESPACE:-monitoring}
+NAMESPACE=${NAMESPACE:-es5}
 KUBECTL="kubectl ${KUBECTL_PARAMS} --namespace=\"${NAMESPACE}\""
 
 NODES=$(eval "${KUBECTL} get nodes -o go-template=\"{{range .items}}{{\\\$name := .metadata.name}}{{\\\$unschedulable := .spec.unschedulable}}{{range .status.conditions}}{{if eq .reason \\\"KubeletReady\\\"}}{{if eq .status \\\"True\\\"}}{{if not \\\$unschedulable}}{{\\\$name}}{{\\\"\\\\n\\\"}}{{end}}{{end}}{{end}}{{end}}{{end}}\"")
@@ -28,6 +24,7 @@ if [ "$ES_DATA_REPLICAS" -lt 3 ]; then
   exit 1
 fi
 
-render_template es-data.yaml.tmpl | eval "${KUBECTL} replace -f -"
-
-eval "${KUBECTL} get pods $@"
+print_green "Labeling nodes which will serve Elasticsearch data pods"
+for node in $NODES; do
+  eval "${KUBECTL} label node ${node} es5.data=true --overwrite"
+done

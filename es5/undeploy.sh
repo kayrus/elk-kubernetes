@@ -12,21 +12,19 @@ print_green() {
 }
 
 #KUBECTL_PARAMS="--context=foo"
-NAMESPACE=${NAMESPACE:-monitoring}
+NAMESPACE=${NAMESPACE:-es5}
 KUBECTL="kubectl ${KUBECTL_PARAMS} --namespace=\"${NAMESPACE}\""
 
 INSTANCES="deployment/es-client
 deployment/es-data
 deployment/es-master
-deployment/es-data-master
-deployment/kibana-logging-v2
-deployment/kubernetes-events-printer
-daemonset/fluentd-elasticsearch
-service/elasticsearch-logging
+deployment/kibana-v5
+deployment/cerebro-v0
+service/elasticsearch
 service/elasticsearch-discovery
-service/kibana-logging
+service/kibana
+service/cerebro
 configmap/es-env
-configmap/fluentd-config
 configmap/es-config"
 
 for instance in ${INSTANCES}; do

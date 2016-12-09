@@ -7,6 +7,6 @@ cd "$CDIR"
 NAMESPACE=${NAMESPACE:-monitoring}
 KUBECTL="kubectl ${KUBECTL_PARAMS} --namespace=\"${NAMESPACE}\""
 
-eval "${KUBECTL} replace -f es-client.yaml"
+eval "${KUBECTL} replace -f es-master.yaml"
 
 eval "${KUBECTL} get pods $@"

@@ -1,36 +1,34 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: es-master
+  name: es-client
   labels:
     component: elasticsearch
-    role: master
-    master: 'true'
+    role: client
 spec:
-  replicas: 3
+  replicas: 2
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxSurge: 0
-      maxUnavailable: 1
+      maxSurge: 1
+      maxUnavailable: 0
   template:
     metadata:
       labels:
         component: elasticsearch
-        role: master
-        master: 'true'
+        role: client
     spec:
       containers:
-      - name: es-master
+      - name: es-client
         securityContext:
           privileged: true
           capabilities:
             add:
               - IPC_LOCK
-        image: kayrus/docker-elasticsearch-kubernetes:2.4.1
+        image: kayrus/docker-elasticsearch-kubernetes:5.0.1
         args:
         - /run.sh
-        - -Des.path.conf=/etc/elasticsearch
+        - -Epath.conf=/etc/elasticsearch
         readinessProbe:
           tcpSocket:
             port: 9300
@@ -47,22 +45,17 @@ spec:
             configMapKeyRef:
               name: es-env
               key: es-cluster-name
-        - name: NUMBER_OF_REPLICAS
-          valueFrom:
-            configMapKeyRef:
-              name: es-env
-              key: es-number-of-replicas
         - name: NODE_MASTER
-          value: 'true'
+          value: 'false'
         - name: NODE_DATA
           value: 'false'
         - name: HTTP_ENABLE
-          value: 'false'
-        - name: ES_HEAP_SIZE
+          value: 'true'
+        - name: ES_JAVA_OPTS
           valueFrom:
             configMapKeyRef:
               name: es-env
-              key: es-master-heap
+              key: es-client-java-opts
         - name: ES_CLIENT_ENDPOINT
           valueFrom:
             configMapKeyRef:
@@ -72,17 +65,12 @@ spec:
         - name: transport
           containerPort: 9300
           protocol: TCP
+        - name: http
+          containerPort: 9200
+          protocol: TCP
         volumeMounts:
         - name: es-config
           mountPath: /etc/elasticsearch
-        # /pre-stop-hook.sh hook is already used in /run.sh on pod shutdown
-        #lifecycle:
-        #  preStop:
-        #    exec:
-        #      command:
-        #      - '/pre-stop-hook.sh'
-      # Wait infinite, we have to move all indices from the current node and only after that shut down the pod
-      terminationGracePeriodSeconds: 31557600
       volumes:
       - name: es-config
         configMap:

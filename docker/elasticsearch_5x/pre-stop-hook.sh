@@ -4,7 +4,7 @@ set -e
 #set -x
 
 export ES_WAIT_FOR_RETRY=30
-export ES_CLIENT_ENDPOINT=${ES_CLIENT_ENDPOINT:-"http://elasticsearch-logging:9200"}
+export ES_CLIENT_ENDPOINT=${ES_CLIENT_ENDPOINT:-"http://elasticsearch:9200"}
 
 echo "Prepare stopping of ${HOSTNAME} pod"
 

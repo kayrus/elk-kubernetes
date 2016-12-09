@@ -1,12 +1,13 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: es-data
+  name: es-master
   labels:
     component: elasticsearch
-    role: data
+    role: master
+    master: 'true'
 spec:
-  replicas: ${ES_DATA_REPLICAS}
+  replicas: 3
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -16,36 +17,20 @@ spec:
     metadata:
       labels:
         component: elasticsearch
-        role: data
-      annotations:
-        scheduler.alpha.kubernetes.io/affinity: |
-          {
-            \"podAntiAffinity\": {
-              \"requiredDuringSchedulingIgnoredDuringExecution\": [
-                {
-                  \"labelSelector\": {
-                    \"matchLabels\": {
-                        \"component\": \"elasticsearch\",
-                        \"role\": \"data\"
-                      }
-                  },
-                  \"topologyKey\": \"kubernetes.io/hostname\"
-                }
-              ]
-            }
-          }
+        role: master
+        master: 'true'
     spec:
       containers:
-      - name: es-data
+      - name: es-master
         securityContext:
           privileged: true
           capabilities:
             add:
               - IPC_LOCK
-        image: kayrus/docker-elasticsearch-kubernetes:2.4.1
+        image: kayrus/docker-elasticsearch-kubernetes:5.0.1
         args:
         - /run.sh
-        - -Des.path.conf=/etc/elasticsearch
+        - -Epath.conf=/etc/elasticsearch
         readinessProbe:
           tcpSocket:
             port: 9300
@@ -62,44 +47,27 @@ spec:
             configMapKeyRef:
               name: es-env
               key: es-cluster-name
-        - name: NUMBER_OF_REPLICAS
-          valueFrom:
-            configMapKeyRef:
-              name: es-env
-              key: es-number-of-replicas
         - name: NODE_MASTER
-          value: 'false'
-        - name: NODE_DATA
           value: 'true'
+        - name: NODE_DATA
+          value: 'false'
         - name: HTTP_ENABLE
           value: 'false'
-        - name: ES_HEAP_SIZE
+        - name: ES_JAVA_OPTS
           valueFrom:
             configMapKeyRef:
               name: es-env
-              key: es-data-heap
+              key: es-master-java-opts
         - name: ES_CLIENT_ENDPOINT
           valueFrom:
             configMapKeyRef:
               name: es-env
               key: es-client-endpoint
-        - name: ES_PERSISTENT
-          valueFrom:
-            configMapKeyRef:
-              name: es-env
-              key: es-persistent-storage
         ports:
         - name: transport
           containerPort: 9300
           protocol: TCP
-        # Random hostPort to prevent multiple ES data instances on one node
-        - name: dummy
-          containerPort: 28651
-          protocol: TCP
-          hostPort: 28651
         volumeMounts:
-        - name: storage
-          mountPath: /data
         - name: es-config
           mountPath: /etc/elasticsearch
         # /pre-stop-hook.sh hook is already used in /run.sh on pod shutdown
@@ -111,10 +79,6 @@ spec:
       # Wait infinite, we have to move all indices from the current node and only after that shut down the pod
       terminationGracePeriodSeconds: 31557600
       volumes:
-      - name: storage
-        emptyDir: {}
       - name: es-config
         configMap:
           name: es-config
-      nodeSelector:
-        elasticsearch.data: 'true'

@@ -80,6 +80,16 @@ spec:
             configMapKeyRef:
               name: es-env
               key: es-data-heap
+        - name: ES_CLIENT_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              name: es-env
+              key: es-client-endpoint
+        - name: ES_PERSISTENT
+          valueFrom:
+            configMapKeyRef:
+              name: es-env
+              key: es-persistent-storage
         ports:
         - name: transport
           containerPort: 9300

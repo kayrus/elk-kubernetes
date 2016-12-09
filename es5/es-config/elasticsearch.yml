@@ -1,0 +1,35 @@
+cluster:
+  name: ${CLUSTER_NAME}
+
+node:
+  master: ${NODE_MASTER}
+  data: ${NODE_DATA}
+  name: ${HOSTNAME}
+
+network.host: ${NETWORK_HOST}
+
+path:
+  data: /data/data
+  logs: /data/log
+
+bootstrap.memory_lock: true
+
+http:
+  enabled: ${HTTP_ENABLE}
+  compression: true
+  cors:
+    enabled: ${HTTP_CORS_ENABLE}
+    allow-origin: ${HTTP_CORS_ALLOW_ORIGIN}
+
+cloud:
+  kubernetes:
+    service: ${DISCOVERY_SERVICE}
+    namespace: ${NAMESPACE}
+discovery:
+  type: kubernetes
+  zen:
+    minimum_master_nodes: ${NUMBER_OF_MASTERS}
+
+xpack.security.enabled: false
+xpack.graph.enabled: false
+xpack.watcher.enabled: false
