@@ -26,8 +26,7 @@ service/elasticsearch-logging
 service/elasticsearch-discovery
 service/kibana-logging
 configmap/es-env
-configmap/fluentd-config
-configmap/es-config"
+configmap/fluentd-config"
 
 for instance in ${INSTANCES}; do
   eval "${KUBECTL} delete --ignore-not-found --now \"${instance}\""

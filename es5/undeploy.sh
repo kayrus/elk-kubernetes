@@ -24,8 +24,7 @@ service/elasticsearch
 service/elasticsearch-discovery
 service/kibana
 service/cerebro
-configmap/es-env
-configmap/es-config"
+configmap/es-env"
 
 for instance in ${INSTANCES}; do
   eval "${KUBECTL} delete --ignore-not-found --now \"${instance}\""

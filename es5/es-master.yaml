@@ -19,6 +19,24 @@ spec:
         component: elasticsearch
         role: master
         master: 'true'
+      annotations:
+        scheduler.alpha.kubernetes.io/affinity: |
+          {
+            "podAntiAffinity": {
+              "requiredDuringSchedulingIgnoredDuringExecution": [
+                {
+                  "labelSelector": {
+                    "matchLabels": {
+                        "component": "elasticsearch",
+                        "role": "master",
+                        "master": "true"
+                      }
+                  },
+                  "topologyKey": "kubernetes.io/hostname"
+                }
+              ]
+            }
+          }
     spec:
       containers:
       - name: es-master

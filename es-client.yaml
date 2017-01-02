@@ -17,6 +17,23 @@ spec:
       labels:
         component: elasticsearch
         role: client
+      annotations:
+        scheduler.alpha.kubernetes.io/affinity: |
+          {
+            "podAntiAffinity": {
+              "requiredDuringSchedulingIgnoredDuringExecution": [
+                {
+                  "labelSelector": {
+                    "matchLabels": {
+                        "component": "elasticsearch",
+                        "role": "client"
+                      }
+                  },
+                  "topologyKey": "kubernetes.io/hostname"
+                }
+              ]
+            }
+          }
     spec:
       containers:
       - name: es-client
@@ -30,10 +47,19 @@ spec:
         - /run.sh
         - -Des.path.conf=/etc/elasticsearch
         readinessProbe:
-          tcpSocket:
-            port: 9300
+          httpGet:
+            path: /
+            port: 9200
+            scheme: HTTP
           timeoutSeconds: 1
           successThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: /_cluster/health
+            port: 9200
+            scheme: HTTP
+          initialDelaySeconds: 360
+          timeoutSeconds: 2
         imagePullPolicy: Always
         env:
         - name: NAMESPACE
