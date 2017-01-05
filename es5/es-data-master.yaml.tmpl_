@@ -115,4 +115,4 @@ spec:
         configMap:
           name: es-config
       nodeSelector:
-        elasticsearch.data: 'true'
+        es5.data: 'true'
