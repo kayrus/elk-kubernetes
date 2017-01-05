@@ -20,7 +20,7 @@ Kibana deployment has built-in [Kaae](https://github.com/elasticfence/kaae) plug
 
 ### Namespace
 
-This example uses `monitoring` namespace. If you wish to use your own namespace, just export `NAMESPACE=mynamespace` environment variable.
+This example uses `monitoring` namespace for Elasticsearch 2.x and `es5` for Elasticsearch 5.x. If you wish to use your own namespace, just export `NAMESPACE=mynamespace` environment variable.
 
 ### Insecure Elasticsearch connections
 
@@ -28,7 +28,7 @@ This repo should not be used in production when you use insecure public network.
 
 ### Stateless storage
 
-This repo contains Elasticsearch manifests which use stateless disk storage (`emptyDir`). It could be also useful for ephemeral storage in AWS. Fortunately using Elasticsearch [Replica Shards](https://www.elastic.co/guide/en/elasticsearch/guide/current/replica-shards.html) we have data redundancy. An amount of replica shards could be defined in [`es-env.yaml`](es-env.yaml) configmap, default value is 1 which allows to survive one Elasticsearch data pod failure. When one Elasticsearch data pod is down (or removed), Kubernetes Deployment will schedule a new one.
+This repo contains Elasticsearch manifests which use stateless disk storage (`emptyDir`). It could be also useful for ephemeral storage in AWS. Fortunately using Elasticsearch [Replica Shards](https://www.elastic.co/guide/en/elasticsearch/guide/current/replica-shards.html) we have data redundancy. An amount of replica shards could be defined in [`es-env.yaml`](es-env.yaml) configmap (only in Elasticsearch 2.x, for Elasticsearch 5.x please follow [this](https://www.elastic.co/guide/en/elasticsearch/reference/5.0/indices-create-index.html) doc), default value is 1 which allows to survive one Elasticsearch data pod failure. When one Elasticsearch data pod is down (or removed), Kubernetes Deployment will schedule a new one.
 
 One replica shard requires at least **three Elasticsearch data pods**. Rolling upgrade will relocate all the data from the pod prepared to be terminated. If you have only two data pods, there will be no place to move replica shards.
 
@@ -113,7 +113,7 @@ spec:
         path: /
 ```
 
-If you still don't have an Ingress controller installed, you can use manifests from the [`test_ingress`](test_ingress) directory for test purposes.
+If you still don't have an Ingress controller installed, you can use manifests from the [`test_ingress`](https://github.com/kayrus/elk-kubernetes/tree/master/test_ingress) directory for test purposes.
 
 # Installation
 
