@@ -225,6 +225,14 @@ or wait until new index will be created (in our setup new index is being created
 * In some cases after rolling update each new pod gets the same IP addresse as an old one. This results in one empty node after rolling update is done. New [`docker/elasticsearch/pre-stop-hook.sh`](docker/elasticsearch/pre-stop-hook.sh) already contains a fix, but you have to manually clear the `cluster.routing.allocation.exclude._host` option: `curl -XPUT http://elk:9200/_cluster/settings -d'{ "transient" :{ "cluster.routing.allocation.exclude._host" : "" } }"'`.
 * `No up-and-running site-local (private) addresses found` error could be resolved setting the pod's `NETWORK_HOST` environment variable to `0.0.0.0`.
 
+# Elasticsearch X-Pack license
+
+[Obtain](https://register.elastic.co/) the free license and register it with the command below:
+
+```
+curl -XPUT -u "username:password" 'https://elasticsearch.example.com/_xpack/license?acknowledge=true&pretty' -d @es-x-pack-license.json
+```
+
 # TODO
 
 * Convert this repo into [Helm](https://github.com/kubernetes/helm) format.
