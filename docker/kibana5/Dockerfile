@@ -22,7 +22,7 @@ RUN apk add --update curl ca-certificates bash gnupg && \
   rm -rf /kibana/node && \
   apk del curl
 
-# Install Kaae
+# Install X-Pack
 
 RUN /kibana/bin/kibana-plugin install x-pack
 

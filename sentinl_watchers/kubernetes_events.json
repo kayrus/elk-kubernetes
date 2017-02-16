@@ -1,10 +1,11 @@
 {
   "_index": "watcher",
   "_type": "watch",
-  "_id": "kubernetes_node_events",
+  "_id": "kubernetes_events",
   "_score": 1,
   "_source": {
     "trigger": {
+      "title": "kubernetes_events",
       "schedule": {
         "later": "every 1 minute"
       }
@@ -18,7 +19,7 @@
               "filtered": {
                 "query": {
                   "query_string": {
-                    "query": "kubernetes.container_name:\"kubernetes-events-printer\" AND NOT type:\"DELETED\" AND NOT object.involvedObject.namespace:\"monitoring\" AND object.involvedObject.kind:\"Node\"",
+                    "query": "kubernetes.container_name:\"kubernetes-events-printer\" AND NOT type:\"DELETED\" AND NOT object.involvedObject.namespace:\"monitoring\"",
                     "analyze_wildcard": true
                   }
                 },

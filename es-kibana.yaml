@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
       - name: kibana-logging
-        image: kayrus/docker-kibana-kubernetes-kaae:4.6.1
+        image: kayrus/docker-kibana-kubernetes-sentinl:4.6.1
         imagePullPolicy: Always
         resources:
           # keep request = limit to keep this container in guaranteed class
@@ -45,10 +45,10 @@ spec:
           name: ui
           protocol: TCP
         volumeMounts:
-        - name: kaae-config
-          mountPath: /etc/kaae
+        - name: kibana-config
+          mountPath: /etc/kibana
           readOnly: true
       volumes:
-      - name: kaae-config
+      - name: kibana-config
         configMap:
-          name: kaae-config
+          name: kibana-config
