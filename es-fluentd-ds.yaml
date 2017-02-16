@@ -20,10 +20,10 @@ spec:
           - -q
         resources:
           limits:
-            memory: 200Mi
+            memory: 1024Mi
           requests:
             cpu: 100m
-            memory: 200Mi
+            memory: 1024Mi
         volumeMounts:
         - name: var-log
           mountPath: /var/log
