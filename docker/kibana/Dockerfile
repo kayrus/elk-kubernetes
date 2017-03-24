@@ -1,10 +1,11 @@
-FROM mhart/alpine-node:5
+FROM mhart/alpine-node:6
 
 ############################################################# Kibana Docker
 
 EXPOSE 5601
 
-ENV KIBANA_VERSION 4.6.1
+ENV KIBANA_VERSION 4.6.4
+ENV SENTINL_VERSION 4.6.4
 
 # Install Kibana
 
@@ -17,8 +18,8 @@ RUN apk add --update curl ca-certificates sudo && \
   apk del curl
 
 # Install sentinl
-RUN npm install --save later mustache
-RUN /kibana-linux-x86_64/bin/kibana plugin --install sentinl -u https://github.com/sirensolutions/sentinl/archive/tag-4.6.3-1.tar.gz
+RUN npm install --save later mustache emailjs node-slack node-horseman sum-time
+RUN /kibana-linux-x86_64/bin/kibana plugin --install sentinl -u https://github.com/sirensolutions/sentinl/archive/tag-${SENTINL_VERSION}.tar.gz
 
 RUN /kibana-linux-x86_64/bin/kibana plugin --install heatmap -u https://github.com/stormpython/heatmap/archive/1.0.0.zip
 RUN /kibana-linux-x86_64/bin/kibana plugin --install vectormap -u https://github.com/stormpython/vectormap/archive/master.zip
