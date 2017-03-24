@@ -1,4 +1,4 @@
-FROM alpine:3.4
+FROM alpine:latest
 
 ENV JAVA_HOME=/usr/lib/jvm/default-jvm/jre
 
@@ -10,7 +10,7 @@ RUN apk upgrade --update-cache; \
 
 EXPOSE 9200 9300
 
-ENV VERSION 2.4.1
+ENV VERSION 2.4.4
 ENV GOSU_VERSION 1.7
 
 # Install Elasticsearch.
@@ -52,7 +52,7 @@ ENV NUMBER_OF_REPLICAS 1
 ADD do_not_use.yml /elasticsearch/config/elasticsearch.yml
 
 # Install Elasticsearch plug-ins
-RUN /elasticsearch/bin/plugin install io.fabric8/elasticsearch-cloud-kubernetes/2.4.1 --verbose && /elasticsearch/bin/plugin install lmenezes/elasticsearch-kopf/2.x --verbose && /elasticsearch/bin/plugin install https://github.com/vvanholl/elasticsearch-prometheus-exporter/releases/download/2.4.1.0/elasticsearch-prometheus-exporter-2.4.1.0.zip --verbose
+RUN /elasticsearch/bin/plugin install io.fabric8/elasticsearch-cloud-kubernetes/${VERSION} --verbose && /elasticsearch/bin/plugin install lmenezes/elasticsearch-kopf/2.x --verbose && /elasticsearch/bin/plugin install https://github.com/vvanholl/elasticsearch-prometheus-exporter/releases/download/${VERSION}.0/elasticsearch-prometheus-exporter-${VERSION}.0.zip --verbose
 
 # Override elasticsearch.yml config, otherwise plug-in install will fail
 ADD config/elasticsearch.yml /elasticsearch/config/elasticsearch.yml

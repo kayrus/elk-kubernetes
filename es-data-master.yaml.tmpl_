@@ -44,7 +44,7 @@ spec:
           capabilities:
             add:
               - IPC_LOCK
-        image: kayrus/docker-elasticsearch-kubernetes:2.4.1
+        image: kayrus/docker-elasticsearch-kubernetes:2.4.4
         args:
         - /run.sh
         - -Des.path.conf=/etc/elasticsearch
