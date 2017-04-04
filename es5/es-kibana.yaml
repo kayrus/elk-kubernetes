@@ -34,8 +34,8 @@ spec:
     spec:
       containers:
       - name: kibana
-        image: kayrus/docker-kibana-kubernetes:5.0.1
-        #image: docker.elastic.co/kibana/kibana:5.0.1
+        image: kayrus/docker-kibana-kubernetes:5.2.2
+        #image: docker.elastic.co/kibana/kibana:5.2.2
         imagePullPolicy: Always
         readinessProbe:
           httpGet:

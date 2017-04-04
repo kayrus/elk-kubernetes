@@ -21,6 +21,7 @@ deployment/es-master
 deployment/es-data-master
 deployment/kibana-logging-v2
 deployment/kubernetes-events-printer
+deployment/es-curator
 daemonset/fluentd-elasticsearch
 service/elasticsearch-logging
 service/elasticsearch-discovery

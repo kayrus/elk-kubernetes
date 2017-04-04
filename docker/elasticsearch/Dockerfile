@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine:3.5
 
 ENV JAVA_HOME=/usr/lib/jvm/default-jvm/jre
 

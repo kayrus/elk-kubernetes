@@ -1,4 +1,4 @@
-FROM alpine:3.4
+FROM alpine:3.5
 
 ENV JAVA_HOME=/usr/lib/jvm/default-jvm/jre
 
@@ -10,7 +10,7 @@ RUN apk upgrade --update-cache; \
 
 EXPOSE 9200 9300
 
-ENV VERSION 5.0.1
+ENV VERSION 5.2.2
 ENV GOSU_VERSION 1.7
 
 # Install Elasticsearch.
@@ -48,7 +48,7 @@ ENV NAMESPACE default
 ENV DISCOVERY_SERVICE elasticsearch-discovery
 
 # Install Elasticsearch plug-ins
-RUN /elasticsearch/bin/elasticsearch-plugin install x-pack --verbose && /elasticsearch/bin/elasticsearch-plugin install io.fabric8:elasticsearch-cloud-kubernetes:$VERSION --verbose && /elasticsearch/bin/elasticsearch-plugin install https://github.com/vvanholl/elasticsearch-prometheus-exporter/releases/download/5.0.1.0/elasticsearch-prometheus-exporter-$VERSION.0.zip --verbose
+RUN /elasticsearch/bin/elasticsearch-plugin install x-pack --verbose && /elasticsearch/bin/elasticsearch-plugin install io.fabric8:elasticsearch-cloud-kubernetes:${VERSION} --verbose && /elasticsearch/bin/elasticsearch-plugin install https://github.com/vvanholl/elasticsearch-prometheus-exporter/releases/download/${VERSION}.0/elasticsearch-prometheus-exporter-${VERSION}.0.zip --verbose
 
 # Override elasticsearch.yml config, otherwise plug-in install will fail
 ADD config/elasticsearch.yml /elasticsearch/config/elasticsearch.yml

@@ -4,7 +4,7 @@ FROM mhart/alpine-node:6
 
 EXPOSE 5601
 
-ENV KIBANA_VERSION 5.0.1
+ENV KIBANA_VERSION 5.2.2
 ENV GOSU_VERSION 1.7
 # Install Kibana
 
