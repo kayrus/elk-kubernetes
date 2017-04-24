@@ -1,0 +1,12 @@
+apiVersion: rbac.authorization.k8s.io/v1alpha1
+kind: ClusterRoleBinding
+metadata:
+  name: kubernetes-events-printer
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kubernetes-events-printer
+subjects:
+- kind: ServiceAccount
+  name: kubernetes-events-printer
+  namespace: logging
