@@ -27,7 +27,19 @@ service/elasticsearch-logging
 service/elasticsearch-discovery
 service/kibana-logging
 configmap/es-env
-configmap/fluentd-config"
+configmap/fluentd-config
+serviceaccount/es-client
+serviceaccount/es-data
+serviceaccount/fluentd
+serviceaccount/kubernetes-events-printer
+role/es-client
+role/es-data
+clusterrole/fluentd
+clusterrole/kubernetes-events-printer
+rolebinding/es-client
+rolebinding/es-data
+clusterrolebinding/fluentd
+clusterrolebinding/kubernetes-events-printer"
 
 for instance in ${INSTANCES}; do
   eval "${KUBECTL} delete --ignore-not-found --now \"${instance}\""

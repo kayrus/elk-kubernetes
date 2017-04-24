@@ -11,6 +11,7 @@ spec:
         k8s-app: fluentd-logging
         name: fluentd-logging
     spec:
+      serviceAccount: fluentd
       containers:
       - name: fluentd-elasticsearch
         image: kayrus/fluentd-elasticsearch:1.20

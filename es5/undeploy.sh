@@ -24,7 +24,19 @@ service/elasticsearch
 service/elasticsearch-discovery
 service/kibana
 service/cerebro
-configmap/es-env"
+configmap/es-env
+serviceaccount/es-client
+serviceaccount/es-data
+serviceaccount/fluentd
+serviceaccount/kubernetes-events-printer
+role/es-client
+role/es-data
+clusterrole/fluentd
+clusterrole/kubernetes-events-printer
+rolebinding/es-client
+rolebinding/es-data
+clusterrolebinding/fluentd
+clusterrolebinding/kubernetes-events-printer"
 
 for instance in ${INSTANCES}; do
   eval "${KUBECTL} delete --ignore-not-found --now \"${instance}\""

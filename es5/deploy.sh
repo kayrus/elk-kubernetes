@@ -45,4 +45,7 @@ done
 
 eval "${KUBECTL} create configmap es-config --from-file=es-config --dry-run -o yaml" | eval "${KUBECTL} apply -f -"
 
+## Install RBAC policies
+eval "${KUBECTL} apply -f rbac"
+
 eval "${KUBECTL} get pods $@"
