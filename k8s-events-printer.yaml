@@ -15,6 +15,7 @@ spec:
         component: fluentd
         role: kubernetes-events-printer
     spec:
+      serviceAccount: kubernetes-events-printer
       containers:
       - name: kubernetes-events-printer
         image: kayrus/kubernetes-events-printer:latest

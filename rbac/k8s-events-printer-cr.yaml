@@ -1,0 +1,9 @@
+apiVersion: rbac.authorization.k8s.io/v1alpha1
+kind: ClusterRole
+metadata:
+  name: kubernetes-events-printer
+rules:
+- apiGroups: [""]
+  resources:
+  - events
+  verbs: ["get", "list", "watch"]
