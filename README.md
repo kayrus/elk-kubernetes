@@ -67,7 +67,7 @@ If you already have **data-master** deployment from previous versions, you have 
 
 [`run.sh`](docker/elasticsearch/run.sh) script inside Elasticsearch image contains shutdown handler which waits until the node move out all its data to another cluster nodes. And only when there is no data - pod shuts down. [`es-data.yaml.tmpl`](es-data.yaml.tmpl) template contains a `terminationGracePeriodSeconds: 31557600` option which prevents premature pod kill.
 
-![rollin-update](images/es_update.gif "Rolling update")
+![rollin-update](https://raw.githubusercontent.com/kayrus/elk-kubernetes/master/images/es_update.gif "Rolling update")
 
 # Removing old indices
 
@@ -179,9 +179,14 @@ The command below applies [`es-env.yaml`](es-env.yaml) config and [`es-data.yaml
 
 # Monitoring the cluster state
 
-We use `kopf` plugin for elasticsearch. You can view the cluster state using links below:
+The `kopf` plugin is used for Elasticsearch 2.4 monitoring. You can view the cluster state using links below:
 
 * [https://elasticsearch.example.com/_plugin/kopf/](https://elasticsearch.example.com/_plugin/kopf/)
+* [https://kibana.example.com/status](https://kibana.example.com/status)
+
+The `cerebro` is used for Elasticsearch 5.x monitoring. You can view the cluster state using links below:
+
+* [https://elasticsearch.example.com/cerebro/](https://elasticsearch.example.com/cerebro/)
 * [https://kibana.example.com/status](https://kibana.example.com/status)
 
 # Kibana and GEO data
@@ -215,7 +220,7 @@ or wait until new index will be created (in our setup new index is being created
 
 `k8s-events-printer.yaml` manifest is a simple `alpine` container with `curl` and `jq` tools installed. It prints all Kubernetes events into stdout and `fluentd` just parses and forwards these events into Elasticsearch as a regular json log.
 
-![kubernetes events](images/kibana3.png "Kubernetes events")
+![kubernetes events](https://raw.githubusercontent.com/kayrus/elk-kubernetes/master/images/kibana3.png "Kubernetes events")
 
 # Known issues
 
@@ -245,5 +250,5 @@ curl -XPUT -u "username:password" 'https://elasticsearch.example.com/_xpack/lice
 
 # Pictures
 
-![geomap](images/kibana1.png "Geo Map")
-![countries](images/kibana2.png "Countries")
+![geomap](https://raw.githubusercontent.com/kayrus/elk-kubernetes/master/images/kibana1.png "Geo Map")
+![countries](https://raw.githubusercontent.com/kayrus/elk-kubernetes/master/images/kibana2.png "Countries")

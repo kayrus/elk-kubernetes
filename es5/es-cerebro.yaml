@@ -34,7 +34,7 @@ spec:
     spec:
       containers:
       - name: cerebro
-        image: kayrus/docker-elasticsearch-cerebro:0.4.1
+        image: kayrus/docker-elasticsearch-cerebro:0.6.5
         imagePullPolicy: Always
         readinessProbe:
           httpGet:
@@ -48,8 +48,6 @@ spec:
               configMapKeyRef:
                 name: es-env
                 key: es-client-endpoint
-          - name: SERVER_BASEPATH
-            value: "/cerebro"
         ports:
         - containerPort: 9000
           name: ui
