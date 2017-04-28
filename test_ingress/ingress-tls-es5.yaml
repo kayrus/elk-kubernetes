@@ -17,7 +17,7 @@ spec:
     http:
       paths:
       - backend:
-          serviceName: elasticsearch
+          serviceName: elasticsearch-logging
           servicePort: 9200
         path: /
 ---
@@ -59,3 +59,12 @@ spec:
           serviceName: cerebro
           servicePort: 9000
         path: /cerebro
+      # kopf backward compatibility
+      - backend:
+          serviceName: cerebro
+          servicePort: 9000
+        path: /_plugin/kopf
+      - backend:
+          serviceName: cerebro
+          servicePort: 9000
+        path: /_plugin/kopf/

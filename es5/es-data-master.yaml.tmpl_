@@ -110,9 +110,11 @@ spec:
       volumes:
       - name: storage
         hostPath:
-          path: '/data/es5'
+          path: '/data/elk'
+      #- name: storage
+      #  emptyDir: {}
       - name: es-config
         configMap:
           name: es-config
       nodeSelector:
-        es5.data: 'true'
+        elasticsearch.data: 'true'

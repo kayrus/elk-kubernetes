@@ -1,0 +1,41 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: es-curator
+  labels:
+    k8s-app: es-curator
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        k8s-app: es-curator
+    spec:
+      containers:
+      - name: es-curator
+        image: kayrus/elasticsearch-curator:4.2.3
+        imagePullPolicy: Always
+        resources:
+          limits:
+            cpu: 100m
+            memory: 100Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        args:
+        - /usr/local/bin/curator-cron
+        - --host=elasticsearch-logging
+        - --port=9200
+        - delete_indices
+        - --filter_list='[{"filtertype":"age","source":"name","direction":"older","timestring":"%Y.%m.%d","unit":"days","unit_count":$(REMOVE_INDICES_OLDER_THAN_DAYS)},{"filtertype":"pattern","kind":"prefix","value":"logstash-"}]'
+        env:
+        - name: REMOVE_INDICES_OLDER_THAN_DAYS
+          valueFrom:
+            configMapKeyRef:
+              name: es-env
+              key: es-remove-indices-older-than-days

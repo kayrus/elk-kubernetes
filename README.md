@@ -14,13 +14,13 @@ This repo deploys complete ELK stack (actually **EFK**: **Elasticsearch, Fluentd
 
 This repo already contains fluentd configuration example which works in most cases. It contains log modification examples, Java backtrace multiline logs processing, log parsing examples, [Kubernetes events processing](#forward-kubernetes-events-into-kibanaelasticsearch) and more.
 
-Kibana deployment has built-in [Sentinl](https://github.com/elasticfence/sentinl) plugin which allows to generate notifications on logs anomalies. See [watcher example](sentinl_watchers) (should be stored at https://kibana.example.com/app/sentinl).
+Kibana deployment has built-in [Sentinl](https://github.com/elasticfence/sentinl) plugin (**it works only with Kibana 2.4.x**) which allows to generate notifications on logs anomalies. See [watcher example](sentinl_watchers) (should be stored at https://kibana.example.com/app/sentinl).
 
 ## Assumptions
 
 ### Namespace
 
-This example uses `monitoring` namespace for Elasticsearch 2.x and `es5` for Elasticsearch 5.x. If you wish to use your own namespace, just export `NAMESPACE=mynamespace` environment variable.
+This example uses `monitoring` namespace for Elasticsearch 2.x and 5.x. If you wish to use your own namespace, just export `NAMESPACE=mynamespace` environment variable.
 
 ### Insecure Elasticsearch connections
 
@@ -229,6 +229,29 @@ or wait until new index will be created (in our setup new index is being created
 * Kubernetes < v1.3.6 has a [bug](https://github.com/kubernetes/kubernetes/issues/35333) which stops pause container before graceful Elasticsearch pod shutdown which results in inaccessible data pod while moving out shards.
 * In some cases after rolling update each new pod gets the same IP addresse as an old one. This results in one empty node after rolling update is done. New [`docker/elasticsearch/pre-stop-hook.sh`](docker/elasticsearch/pre-stop-hook.sh) already contains a fix, but you have to manually clear the `cluster.routing.allocation.exclude._host` option: `curl -XPUT http://elk:9200/_cluster/settings -d'{ "transient" :{ "cluster.routing.allocation.exclude._host" : "" } }"'`.
 * `No up-and-running site-local (private) addresses found` error could be resolved setting the pod's `NETWORK_HOST` environment variable to `0.0.0.0`.
+
+# Upgrade Elasticsearch from 2.x to 5.x
+
+**Experimental!**. Please perform this procedure in test environment first.
+**Sentinl events watcher still doesn't support 5.x revision**.
+
+Upgrade procedure requires persistant storage, since all Elasticsearch components should be shut down. In this case you have to modify `es-env` configmap first and set `es-persistent-storage` option to `true`:
+
+```yaml
+  es-persistent-storage: "true"
+```
+
+Then modify `es-data` deployment and add persistent storage path, i.e.:
+
+```yaml
+      - name: storage
+        hostPath:
+          path: '/data/elk'
+```
+
+This will trigger regular rolling upgrade procedure and enable persistant storage for Elasticsearch 2.x.
+
+Then remove `es-data`, `es-client`, `es-master` and `kibana-logging-v2` deployments and run `./deploy.sh` script inside the `es5` directory. It should deploy new Elasticsearch 5.x which has to upgrade existing Elasticsearch 2.x indexes.
 
 # Elasticsearch X-Pack license
 

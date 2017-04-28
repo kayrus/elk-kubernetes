@@ -16,7 +16,7 @@ render_template() {
 }
 
 #KUBECTL_PARAMS="--context=foo"
-NAMESPACE=${NAMESPACE:-es5}
+NAMESPACE=${NAMESPACE:-monitoring}
 KUBECTL="kubectl ${KUBECTL_PARAMS} --namespace=\"${NAMESPACE}\""
 
 eval "${KUBECTL} replace -f es-env.yaml" || eval "${KUBECTL} replace -f es-env.yaml"

@@ -12,7 +12,7 @@ print_green() {
 }
 
 #KUBECTL_PARAMS="--context=foo"
-NAMESPACE=${NAMESPACE:-es5}
+NAMESPACE=${NAMESPACE:-monitoring}
 KUBECTL="kubectl ${KUBECTL_PARAMS} --namespace=\"${NAMESPACE}\""
 
 NODES=$(eval "${KUBECTL} get nodes -l 'kubernetes.io/role!=master' -o go-template=\"{{range .items}}{{\\\$name := .metadata.name}}{{\\\$unschedulable := .spec.unschedulable}}{{range .status.conditions}}{{if eq .reason \\\"KubeletReady\\\"}}{{if eq .status \\\"True\\\"}}{{if not \\\$unschedulable}}{{\\\$name}}{{\\\"\\\\n\\\"}}{{end}}{{end}}{{end}}{{end}}{{end}}\"")
@@ -26,5 +26,5 @@ fi
 
 print_green "Labeling nodes which will serve Elasticsearch data pods"
 for node in $NODES; do
-  eval "${KUBECTL} label node ${node} es5.data=true --overwrite"
+  eval "${KUBECTL} label node ${node} elasticsearch.data=true --overwrite"
 done

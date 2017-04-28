@@ -16,7 +16,7 @@ render_template() {
 }
 
 #KUBECTL_PARAMS="--context=foo"
-NAMESPACE=${NAMESPACE:-es5}
+NAMESPACE=${NAMESPACE:-monitoring}
 KUBECTL="kubectl ${KUBECTL_PARAMS} --namespace=\"${NAMESPACE}\""
 
 eval "kubectl ${KUBECTL_PARAMS} create namespace \"${NAMESPACE}\""
@@ -32,7 +32,7 @@ fi
 
 print_green "Labeling nodes which will serve Elasticsearch data pods"
 for node in $NODES; do
-  eval "${KUBECTL} label node ${node} es5.data=true --overwrite"
+  eval "${KUBECTL} label node ${node} elasticsearch.data=true --overwrite"
 done
 
 for yaml in *.yaml.tmpl; do
@@ -44,5 +44,6 @@ for yaml in *.yaml; do
 done
 
 eval "${KUBECTL} create configmap es-config --from-file=es-config --dry-run -o yaml" | eval "${KUBECTL} apply -f -"
+eval "${KUBECTL} create configmap fluentd-config --from-file=../docker/fluentd/td-agent.conf --dry-run -o yaml" | eval "${KUBECTL} apply -f -"
 
 eval "${KUBECTL} get pods $@"

@@ -12,19 +12,24 @@ print_green() {
 }
 
 #KUBECTL_PARAMS="--context=foo"
-NAMESPACE=${NAMESPACE:-es5}
+NAMESPACE=${NAMESPACE:-monitoring}
 KUBECTL="kubectl ${KUBECTL_PARAMS} --namespace=\"${NAMESPACE}\""
 
 INSTANCES="deployment/es-client
 deployment/es-data
 deployment/es-master
+deployment/es-data-master
 deployment/kibana-v5
 deployment/cerebro-v0
-service/elasticsearch
+deployment/kubernetes-events-printer
+deployment/es-curator
+daemonset/fluentd-elasticsearch
+service/elasticsearch-logging
 service/elasticsearch-discovery
 service/kibana
 service/cerebro
-configmap/es-env"
+configmap/es-env
+configmap/fluentd-config"
 
 for instance in ${INSTANCES}; do
   eval "${KUBECTL} delete --ignore-not-found --now \"${instance}\""
