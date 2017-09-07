@@ -14,7 +14,7 @@ This repo deploys complete ELK stack (actually **EFK**: **Elasticsearch, Fluentd
 
 This repo already contains fluentd configuration example which works in most cases. It contains log modification examples, Java backtrace multiline logs processing, log parsing examples, [Kubernetes events processing](#forward-kubernetes-events-into-kibanaelasticsearch) and more.
 
-Kibana deployment has built-in [Sentinl](https://github.com/elasticfence/sentinl) plugin (**it works only with Kibana 2.4.x**) which allows to generate notifications on logs anomalies. See [watcher example](sentinl_watchers) (should be stored at https://kibana.example.com/app/sentinl).
+Kibana deployment has built-in [Sentinl](https://github.com/sirensolutions/sentinl) plugin (**it works only with Kibana 2.4.x**) which allows to generate notifications on logs anomalies. See [watcher example](sentinl_watchers) (should be stored at https://kibana.example.com/app/sentinl).
 
 ## Assumptions
 
