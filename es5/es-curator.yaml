@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: es-curator
-        image: kayrus/elasticsearch-curator:4.2.3
+        image: kayrus/elasticsearch-curator:5.2.0
         imagePullPolicy: Always
         resources:
           limits:
